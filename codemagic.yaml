@@ -9,8 +9,12 @@ workflows:
       - name: Set Execute Permissions
         script: |
           chmod +x ./gradlew
+      - name: Check Gradle Environment
+        script: |
+          ./gradlew --version
+          ls -l
       - name: Build Debug APK
         script: |
-          ./gradlew assembleDebug
+          ./gradlew :app:assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/app-debug.apk
