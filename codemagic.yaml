@@ -6,6 +6,9 @@ workflows:
     environment:
       java: 1.8
     scripts:
+      - name: Set Execute Permissions
+        script: |
+          chmod +x ./gradlew
       - name: Build Debug APK
         script: |
           ./gradlew assembleDebug
