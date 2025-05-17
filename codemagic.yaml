@@ -6,6 +6,9 @@ workflows:
     environment:
       java: 1.8
     scripts:
+      - name: Generate Gradle Wrapper
+        script: |
+          gradle wrapper --gradle-version 8.2
       - name: Set Execute Permissions
         script: |
           chmod +x ./gradlew
