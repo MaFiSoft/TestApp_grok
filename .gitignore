@@ -13,3 +13,8 @@ local.properties
 *.apk
 *.ap_
 *.aab
+
+# Gradle Wrapper (ausdrücklich erlauben)
+!gradlew
+!gradlew.bat
+!gradle/wrapper/
