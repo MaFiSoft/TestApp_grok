@@ -4,20 +4,26 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 60
     environment:
-      java: 1.8
+      java: 11
     scripts:
+      - name: Clean Gradle Cache
+        script: |
+          rm -rf ~/.gradle/caches/
       - name: Generate Gradle Wrapper
         script: |
-          gradle wrapper --gradle-version 8.2
+          gradle wrapper --gradle-version 8.2 --distribution-type bin
       - name: Set Execute Permissions
         script: |
           chmod +x ./gradlew
       - name: Check Gradle Environment
         script: |
+          java -version
           ./gradlew --version
           ls -l
+          ls -l gradle/wrapper/
+          cat gradle/wrapper/gradle-wrapper.properties
       - name: Build Debug APK
         script: |
-          ./gradlew :app:assembleDebug
+          ./gradlew :app:assembleDebug --stacktrace --info
     artifacts:
       - app/build/outputs/apk/debug/app-debug.apk
