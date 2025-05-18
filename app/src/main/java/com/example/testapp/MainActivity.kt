@@ -111,25 +111,13 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
     ) {
         colors.forEach { (color, name) ->
             DropdownMenuItem(
+                text = { Text(name, color = Color.Black) },
                 onClick = {
                     onColorSelect(color)
                     onDismiss()
                 },
                 modifier = Modifier
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .background(color)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(name, color = Color.Black)
-                }
-            }
+            )
         }
     }
 }
