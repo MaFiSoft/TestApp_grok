@@ -35,47 +35,51 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -> Unit) {
-    Box(
+    Surface(
+        color = color,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color)
             .height(56.dp)
-            .padding(horizontal = 16.dp)
     ) {
-        if (showMenuIcon) {
-            Icon(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = "Menu",
-                tint = Color.White,
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.CenterStart)
-                    .clickable { onMenuClick() }
+        Box(
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            if (showMenuIcon) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Menu",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterStart)
+                        .clickable { onMenuClick() }
+                )
+            }
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
-        Text(
-            text = title,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.Center)
-        )
     }
 }
 
 @Composable
 fun BottomBar(color: Color, navController: NavController) {
-    Box(
+    Surface(
+        color = color,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color)
             .height(56.dp)
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Artikel",
