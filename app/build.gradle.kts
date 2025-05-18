@@ -32,16 +32,17 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.17" // Aktualisiert
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 }
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0") // Für Theme.AppCompat
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.activity:activity-compose:1.9.2")
-    implementation(platform("androidx.compose:compose-bom:2024.10.00")) // Aktualisiert
+    implementation(platform("androidx.compose:compose-bom:2024.10.00"))
     implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.material3:material3:1.3.0") // Explizite Version
+    implementation("androidx.compose.material3:material3:1.3.0")
+    implementation("androidx.compose.compiler:compiler:1.5.15")
     implementation("androidx.navigation:navigation-compose:2.8.0")
 }
