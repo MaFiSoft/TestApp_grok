@@ -2,9 +2,11 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android") version "1.9.25"
 }
+
 android {
     namespace = "com.example.testapp"
     compileSdk = 34
+
     defaultConfig {
         applicationId = "com.example.testapp"
         minSdk = 24
@@ -12,6 +14,7 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -32,6 +35,7 @@ android {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
 }
+
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
