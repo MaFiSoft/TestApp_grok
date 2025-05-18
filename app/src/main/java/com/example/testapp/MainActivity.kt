@@ -79,43 +79,7 @@ fun BottomBar(color: Color, navController: NavController) {
 }
 
 @Composable
-fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
-    val colors = listOf(
-        Color.Blue to "Blau",
-        Color.Red to "Rot",
-        Color.Green to "Grün",
-        Color.Yellow to "Gelb",
-        Color.Magenta to "Lila"
-    )
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { onDismiss() },
-        modifier = modifier
-            .width(200.dp)
-            .background(Color.White)
-    ) {
-        colors.forEach { (color, name) ->
-            DropdownMenuItem(
-                text = { Text(name, color = Color.Black) },
-                onClick = {
-                    onColorSelect(color)
-                    onDismiss()
-                },
-                leadingIcon = {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .background(color)
-                    )
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect: (Color) -> Unit) {
-    var showMenu by remember { mutableStateOf(false) }
+fun MainScreen(navController: NavController, selectedColor: Color) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -125,18 +89,8 @@ fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect
             title = "Test-App",
             color = selectedColor,
             showMenuIcon = true,
-            onMenuClick = { showMenu = true }
+            onMenuClick = {} // Menü vorübergehend deaktiviert
         )
-        if (showMenu) {
-            ColorMenu(
-                expanded = showMenu,
-                onDismiss = { showMenu = false },
-                onColorSelect = { color ->
-                    onColorSelect(color)
-                    showMenu = false
-                }
-            )
-        }
         Spacer(modifier = Modifier.weight(1f))
         BottomBar(color = selectedColor, navController = navController)
     }
@@ -193,16 +147,12 @@ fun StoreScreen(navController: NavController, selectedColor: Color) {
 @Composable
 fun TestApp() {
     val navController = rememberNavController()
-    var selectedColor by remember { mutableStateOf(Color.Blue) }
+    val selectedColor = Color.Blue
 
     MaterialTheme {
         NavHost(navController, startDestination = "main") {
             composable("main") {
-                MainScreen(
-                    navController = navController,
-                    selectedColor = selectedColor,
-                    onColorSelect = { selectedColor = it }
-                )
+                MainScreen(navController = navController, selectedColor = selectedColor)
             }
             composable("articles") {
                 ArticleScreen(navController = navController, selectedColor = selectedColor)
