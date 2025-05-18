@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android") version "1.9.25" // Kotlin auf 1.9.25 downgraden
-    id("org.jetbrains.kotlin.plugin.compose") // Compose-Plugin hinzufügen
+    id("org.jetbrains.kotlin.android") version "1.9.25"
+    id("org.jetbrains.kotlin.plugin.compose") version "1.9.25"
 }
 
 android {
