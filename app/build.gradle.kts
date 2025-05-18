@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android") version "1.9.25"
-    id("org.jetbrains.kotlin.plugin.compose") version "1.9.25"
 }
 
 android {
@@ -46,4 +45,5 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.8.0")
+    implementation("androidx.compose.compiler:compiler:1.5.15")
 }
