@@ -101,9 +101,9 @@ fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect
     var showMenu by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Test-App", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = selectedColor
                 ),
                 actions = {
@@ -117,37 +117,36 @@ fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect
                 }
             )
         },
-        bottomBar = { BottomBar(color = selectedColor, navController = navController) },
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(Color.White)
-            ) {
-                if (showMenu) {
-                    ColorMenu(
-                        expanded = showMenu,
-                        onDismiss = { showMenu = false },
-                        onColorSelect = { color ->
-                            onColorSelect(color)
-                            showMenu = false
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
+        bottomBar = { BottomBar(color = selectedColor, navController = navController) }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color.White)
+        ) {
+            if (showMenu) {
+                ColorMenu(
+                    expanded = showMenu,
+                    onDismiss = { showMenu = false },
+                    onColorSelect = { color ->
+                        onColorSelect(color)
+                        showMenu = false
+                    }
+                )
             }
+            Spacer(modifier = Modifier.weight(1f))
         }
-    )
+    }
 }
 
 @Composable
 fun ArticleScreen(navController: NavController, selectedColor: Color) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Artikel", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = selectedColor
                 ),
                 navigationIcon = {
@@ -160,42 +159,41 @@ fun ArticleScreen(navController: NavController, selectedColor: Color) {
                     }
                 }
             )
-        },
-        content = { padding ->
-            Column(
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color.White)
+        ) {
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(Color.White)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    items(listOf("Milch", "Brot", "Eier", "Käse", "Äpfel")) { item ->
-                        Text(
-                            text = item,
-                            fontSize = 18.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                        )
-                    }
+                items(listOf("Milch", "Brot", "Eier", "Käse", "Äpfel")) { item ->
+                    Text(
+                        text = item,
+                        fontSize = 18.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
                 }
             }
         }
-    )
+    }
 }
 
 @Composable
 fun StoreScreen(navController: NavController, selectedColor: Color) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Geschäfte", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = selectedColor
                 ),
                 navigationIcon = {
@@ -208,25 +206,24 @@ fun StoreScreen(navController: NavController, selectedColor: Color) {
                     }
                 }
             )
-        },
-        content = { padding ->
-            Column(
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color.White)
+        ) {
+            Button(
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(Color.White)
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
-                Button(
-                    onClick = { navController.popBackStack() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text("Zurück")
-                }
+                Text("Zurück")
             }
         }
-    )
+    }
 }
 
 @Composable
