@@ -6,8 +6,6 @@ workflows:
         - android
       vars:
         CM_BUILD_DIR: $CM_BUILD_DIR
-      android_signing:
-        - keystore
     triggering:
       events:
         - push
