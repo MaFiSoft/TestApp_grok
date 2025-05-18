@@ -12,11 +12,11 @@ workflows:
           rm -rf ~/.gradle/wrapper/
           rm -rf gradle/
           rm -rf /tmp/gradle-*
-      - name: Debug Java Environment
-        script: |
-          java -version
-          echo $JAVA_HOME
-          ls -l /Library/Java/JavaVirtualMachines/
+      #- name: Debug Java Environment
+      #  script: |
+      #    java -version
+      #    echo $JAVA_HOME
+      #    ls -l /Library/Java/JavaVirtualMachines/
       - name: Install Gradle 8.2
         script: |
           wget https://services.gradle.org/distributions/gradle-8.2-all.zip
@@ -30,26 +30,26 @@ workflows:
       - name: Set Execute Permissions
         script: |
           chmod +x ./gradlew
-      - name: Check Gradle Environment
-        script: |
-          java -version
-          ./gradlew --version
-          ls -l
-          ls -l gradle/wrapper/
-          cat gradle/wrapper/gradle-wrapper.properties
-      - name: Debug Resources
-        script: |
-          ls -l app/src/main/res/
-          ls -l app/src/main/res/mipmap-anydpi-v26/
-          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-          cat app/src/main/res/values/themes.xml
-      - name: Debug Dependencies
-        script: |
-          ./gradlew dependencies
-      - name: Debug Kotlin Compilation
-        script: |
-          ./gradlew :app:compileDebugKotlin --stacktrace
+      #- name: Check Gradle Environment
+      #  script: |
+      #    java -version
+      #    ./gradlew --version
+      #    ls -l
+      #    ls -l gradle/wrapper/
+      #    cat gradle/wrapper/gradle-wrapper.properties
+      #- name: Debug Resources
+      #  script: |
+      #    ls -l app/src/main/res/
+      #    ls -l app/src/main/res/mipmap-anydpi-v26/
+      #    cat app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+      #    cat app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+      #    cat app/src/main/res/values/themes.xml
+      #- name: Debug Dependencies
+      #  script: |
+      #    ./gradlew dependencies
+      #- name: Debug Kotlin Compilation
+      #  script: |
+      #    ./gradlew :app:compileDebugKotlin --stacktrace
       - name: Build Debug APK
         script: |
           ./gradlew :app:assembleDebug --stacktrace --warn
