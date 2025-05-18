@@ -1,12 +1,10 @@
 package com.example.testapp
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.extended.Default
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,148 +17,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.testapp.ui.theme.TestAppTheme
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            TestAppTheme {
-                TestApp()
-            }
-        }
-    }
-}
-
-@Composable
-fun TestApp() {
-    val navController = rememberNavController()
-    var headerFooterColor by remember { mutableStateOf(Color.Blue) }
-    var isMenuOpen by remember { mutableStateOf(false) }
-
-    NavHost(navController = navController, startDestination = "main") {
-        composable("main") {
-            MainScreen(
-                navController = navController,
-                headerFooterColor = headerFooterColor,
-                isMenuOpen = isMenuOpen,
-                onMenuToggle = { isMenuOpen = !isMenuOpen },
-                onColorChange = { headerFooterColor = it }
-            )
-        }
-        composable("articles") {
-            ArticlesScreen(navController = navController, headerFooterColor = headerFooterColor)
-        }
-        composable("shops") {
-            ShopsScreen(navController = navController, headerFooterColor = headerFooterColor)
-        }
-    }
-}
-
-@Composable
-fun MainScreen(
-    navController: NavController,
-    headerFooterColor: Color,
-    isMenuOpen: Boolean,
-    onMenuToggle: () -> Unit,
-    onColorChange: (Color) -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopBar("Hauptmenü", headerFooterColor, showMenuIcon = true, onMenuClick = onMenuToggle)
-        },
-        bottomBar = {
-            BottomBar(
-                headerFooterColor = headerFooterColor,
-                buttons = listOf(
-                    "Artikel" to { navController.navigate("articles") },
-                    "Geschäfte" to { navController.navigate("shops") }
-                )
-            )
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(padding),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Test-\nApp",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 48.sp,
-                color = Color.Black
-            )
-        }
-        if (isMenuOpen) {
-            ColorMenu(
-                onColorSelect = {
-                    onColorChange(it)
-                    onMenuToggle()
-                },
-                modifier = Modifier.align(Alignment.TopEnd)
-            )
-        }
-    }
-}
-
-@Composable
-fun ArticlesScreen(navController: NavController, headerFooterColor: Color) {
-    Scaffold(
-        topBar = { TopBar("Artikel", headerFooterColor, showMenuIcon = false, onMenuClick = {}) },
-        bottomBar = {
-            BottomBar(
-                headerFooterColor = headerFooterColor,
-                buttons = listOf("Zurück" to { navController.popBackStack() })
-            )
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(padding),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Artikel",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-        }
-    }
-}
-
-@Composable
-fun ShopsScreen(navController: NavController, headerFooterColor: Color) {
-    Scaffold(
-        topBar = { TopBar("Geschäfte", headerFooterColor, showMenuIcon = false, onMenuClick = {}) },
-        bottomBar = {
-            BottomBar(
-                headerFooterColor = headerFooterColor,
-                buttons = listOf("Zurück" to { navController.popBackStack() })
-            )
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(padding),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Geschäfte",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-        }
-    }
-}
 
 @Composable
 fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -> Unit) {
@@ -169,15 +25,15 @@ fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -
             .fillMaxWidth()
             .background(color)
             .height(56.dp)
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 16.dp)
     ) {
         if (showMenuIcon) {
             Icon(
                 imageVector = Icons.Default.Menu,
-                contentDescription = "Optionsmenü",
+                contentDescription = "Menu",
                 tint = Color.White,
                 modifier = Modifier
+                    .size(24.dp)
                     .align(Alignment.CenterStart)
                     .clickable { onMenuClick() }
             )
@@ -186,30 +42,38 @@ fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -
             text = title,
             color = Color.White,
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
-fun BottomBar(headerFooterColor: Color, buttons: List<Pair<String, () -> Unit>>) {
-    Row(
+fun BottomBar(color: Color, navController: NavController) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(headerFooterColor)
+            .background(color)
             .height(56.dp)
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        contentAlignment = Alignment.Center
     ) {
-        buttons.forEach { (text, onClick) ->
-            Button(
-                onClick = onClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(text = text, color = Color.Black)
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Artikel",
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.clickable { navController.navigate("articles") }
+            )
+            Text(
+                text = "Geschäfte",
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.clickable { navController.navigate("stores") }
+            )
         }
     }
 }
@@ -232,25 +96,115 @@ fun ColorMenu(onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
     ) {
         colors.forEach { (color, name) ->
             DropdownMenuItem(
-                text = {
-                    Row(
+                text = { Text(name, color = Color.Black) },
+                onClick = { onColorSelect(color) },
+                leadingIcon = {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onColorSelect(color) }
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(color)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = name, color = Color.Black)
-                    }
-                },
-                onClick = { onColorSelect(color) }
+                            .size(24.dp)
+                            .background(color)
+                    )
+                }
             )
+        }
+    }
+}
+
+@Composable
+fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect: (Color) -> Unit) {
+    var showMenu by remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        TopBar(
+            title = "Test-App",
+            color = selectedColor,
+            showMenuIcon = true,
+            onMenuClick = { showMenu = true }
+        )
+        if (showMenu) {
+            ColorMenu(
+                onColorSelect = { color ->
+                    onColorSelect(color)
+                    showMenu = false
+                }
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        BottomBar(color = selectedColor, navController = navController)
+    }
+}
+
+@Composable
+fun ArticleScreen(navController: NavController, selectedColor: Color) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        TopBar(
+            title = "Artikel",
+            color = selectedColor,
+            showMenuIcon = false,
+            onMenuClick = {}
+        )
+        Button(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Zurück")
+        }
+    }
+}
+
+@Composable
+fun StoreScreen(navController: NavController, selectedColor: Color) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        TopBar(
+            title = "Geschäfte",
+            color = selectedColor,
+            showMenuIcon = false,
+            onMenuClick = {}
+        )
+        Button(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Zurück")
+        }
+    }
+}
+
+@Composable
+fun TestApp() {
+    val navController = rememberNavController()
+    var selectedColor by remember { mutableStateOf(Color.Blue) }
+
+    MaterialTheme {
+        NavHost(navController, startDestination = "main") {
+            composable("main") {
+                MainScreen(
+                    navController = navController,
+                    selectedColor = selectedColor,
+                    onColorSelect = { selectedColor = it }
+                )
+            }
+            composable("articles") {
+                ArticleScreen(navController = navController, selectedColor = selectedColor)
+            }
+            composable("stores") {
+                StoreScreen(navController = navController, selectedColor = selectedColor)
+            }
         }
     }
 }
