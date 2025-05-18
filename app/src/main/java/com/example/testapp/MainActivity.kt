@@ -1,5 +1,8 @@
 package com.example.testapp
 
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +20,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.testapp.ui.theme.TestAppTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            TestAppTheme {
+                TestApp()
+            }
+        }
+    }
+}
 
 @Composable
 fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -> Unit) {
@@ -96,19 +111,25 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
     ) {
         colors.forEach { (color, name) ->
             DropdownMenuItem(
-                text = { Text(name, color = Color.Black) },
                 onClick = {
                     onColorSelect(color)
                     onDismiss()
                 },
-                leadingIcon = {
+                modifier = Modifier
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
                             .background(color)
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(name, color = Color.Black)
                 }
-            )
+            }
         }
     }
 }
