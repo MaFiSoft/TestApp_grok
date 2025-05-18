@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu // Korrigierter Import
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,7 +29,7 @@ fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -
     ) {
         if (showMenuIcon) {
             Icon(
-                imageVector = Icons.Filled.Menu, // Korrigiert: Icons.Filled.Menu
+                imageVector = Icons.Filled.Menu,
                 contentDescription = "Menu",
                 tint = Color.White,
                 modifier = Modifier
@@ -79,7 +79,7 @@ fun BottomBar(color: Color, navController: NavController) {
 }
 
 @Composable
-fun ColorMenu(onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
+fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
     val colors = listOf(
         Color.Blue to "Blau",
         Color.Red to "Rot",
@@ -88,8 +88,8 @@ fun ColorMenu(onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
         Color.Magenta to "Lila"
     )
     DropdownMenu(
-        expanded = true,
-        onDismissRequest = {},
+        expanded = expanded,
+        onDismissRequest = { onDismiss() },
         modifier = modifier
             .width(200.dp)
             .background(Color.White)
@@ -97,7 +97,10 @@ fun ColorMenu(onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
         colors.forEach { (color, name) ->
             DropdownMenuItem(
                 text = { Text(name, color = Color.Black) },
-                onClick = { onColorSelect(color) },
+                onClick = {
+                    onColorSelect(color)
+                    onDismiss()
+                },
                 leadingIcon = {
                     Box(
                         modifier = Modifier
@@ -126,6 +129,8 @@ fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect
         )
         if (showMenu) {
             ColorMenu(
+                expanded = showMenu,
+                onDismiss = { showMenu = false },
                 onColorSelect = { color ->
                     onColorSelect(color)
                     showMenu = false
