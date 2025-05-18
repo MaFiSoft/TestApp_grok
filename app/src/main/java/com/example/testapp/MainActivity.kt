@@ -6,7 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,39 +32,6 @@ class MainActivity : ComponentActivity() {
             TestAppTheme {
                 TestApp()
             }
-        }
-    }
-}
-
-@Composable
-fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -> Unit) {
-    Surface(
-        color = color,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-        Box(
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) {
-            if (showMenuIcon) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterStart)
-                        .clickable { onMenuClick() }
-                )
-            }
-            Text(
-                text = title,
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
-            )
         }
     }
 }
@@ -129,78 +99,134 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
 @Composable
 fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect: (Color) -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopBar(
-            title = "Test-App",
-            color = selectedColor,
-            showMenuIcon = true,
-            onMenuClick = { showMenu = true }
-        )
-        if (showMenu) {
-            ColorMenu(
-                expanded = showMenu,
-                onDismiss = { showMenu = false },
-                onColorSelect = { color ->
-                    onColorSelect(color)
-                    showMenu = false
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Test-App", color = Color.White, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = selectedColor
+                ),
+                actions = {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Menu",
+                            tint = Color.White
+                        )
+                    }
                 }
             )
+        },
+        bottomBar = { BottomBar(color = selectedColor, navController = navController) },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color.White)
+            ) {
+                if (showMenu) {
+                    ColorMenu(
+                        expanded = showMenu,
+                        onDismiss = { showMenu = false },
+                        onColorSelect = { color ->
+                            onColorSelect(color)
+                            showMenu = false
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
         }
-        Spacer(modifier = Modifier.weight(1f))
-        BottomBar(color = selectedColor, navController = navController)
-    }
+    )
 }
 
 @Composable
 fun ArticleScreen(navController: NavController, selectedColor: Color) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopBar(
-            title = "Artikel",
-            color = selectedColor,
-            showMenuIcon = false,
-            onMenuClick = {}
-        )
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Zurück")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Artikel", color = Color.White, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = selectedColor
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Zurück",
+                            tint = Color.White
+                        )
+                    }
+                }
+            )
+        },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color.White)
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    items(listOf("Milch", "Brot", "Eier", "Käse", "Äpfel")) { item ->
+                        Text(
+                            text = item,
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            }
         }
-    }
+    )
 }
 
 @Composable
 fun StoreScreen(navController: NavController, selectedColor: Color) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopBar(
-            title = "Geschäfte",
-            color = selectedColor,
-            showMenuIcon = false,
-            onMenuClick = {}
-        )
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Zurück")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Geschäfte", color = Color.White, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = selectedColor
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Zurück",
+                            tint = Color.White
+                        )
+                    }
+                }
+            )
+        },
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color.White)
+            ) {
+                Button(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text("Zurück")
+                }
+            }
         }
-    }
+    )
 }
 
 @Composable
