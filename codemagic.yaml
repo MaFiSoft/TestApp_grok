@@ -47,9 +47,9 @@ workflows:
       - name: Debug Dependencies
         script: |
           ./gradlew dependencies
-      #- name: Debug Kotlin Compilation
-      #  script: |
-      #    ./gradlew :app:compileDebugKotlin --stacktrace
+      - name: Debug Kotlin Compilation
+        script: |
+          ./gradlew :app:compileDebugKotlin --stacktrace
       - name: Build Debug APK
         script: |
           ./gradlew :app:assembleDebug --stacktrace --warn
