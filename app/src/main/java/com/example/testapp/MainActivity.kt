@@ -15,23 +15,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.Room
+import com.example.testapp.data.AppDatabase
+import com.example.testapp.data.Article
 import com.example.testapp.ui.theme.TestAppTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "app-database"
+        ).fallbackToDestructiveMigration().build()
         setContent {
             TestAppTheme {
-                ShoppingListScreen()
+                ShoppingListScreen(db)
             }
         }
     }
 }
 
 @Composable
-fun ShoppingListScreen() {
-    var items by remember { mutableStateOf(listOf<String>()) }
+fun ShoppingListScreen(db: AppDatabase) {
+    val scope = rememberCoroutineScope()
+    var items by remember { mutableStateOf(listOf<Article>()) }
     var newItem by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        db.articleDao().getAllArticles().collect { items = it }
+    }
 
     Column(
         modifier = Modifier
@@ -59,8 +72,10 @@ fun ShoppingListScreen() {
             Button(
                 onClick = {
                     if (newItem.isNotBlank()) {
-                        items = items + newItem
-                        newItem = ""
+                        scope.launch {
+                            db.articleDao().insert(Article(name = newItem))
+                            newItem = ""
+                        }
                     }
                 }
             ) {
@@ -86,13 +101,17 @@ fun ShoppingListScreen() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = item,
+                            text = item.name,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.weight(1f)
                         )
                         Button(
-                            onClick = { items = items.filter { it != item } }
+                            onClick = {
+                                scope.launch {
+                                    db.articleDao().delete(item)
+                                }
+                            }
                         ) {
                             Text("Löschen")
                         }
