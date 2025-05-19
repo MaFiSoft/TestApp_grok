@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,14 +23,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.example.testapp.data.AppDatabase
+import com.example.testapp.data.Article
 import com.example.testapp.ui.theme.TestAppTheme
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "app-database"
+        ).build()
         setContent {
             TestAppTheme {
-                TestApp()
+                TestApp(db)
             }
         }
     }
@@ -100,7 +110,7 @@ fun BottomBar(color: Color, navController: NavController) {
 }
 
 @Composable
-fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -> Unit, modifier: Modifier = Modifier) {
+fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -> Unit) {
     val colors = listOf(
         Color.Blue to "Blau",
         Color.Red to "Rot",
@@ -111,7 +121,7 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = { onDismiss() },
-        modifier = modifier
+        modifier = Modifier
             .width(200.dp)
             .background(Color.White)
     ) {
@@ -121,84 +131,175 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
                 onClick = {
                     onColorSelect(color)
                     onDismiss()
-                },
-                modifier = Modifier
-            )
-        }
-    }
-}
-
-@Composable
-fun MainScreen(navController: NavController, selectedColor: Color, onColorSelect: (Color) -> Unit) {
-    var showMenu by remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopBar(
-            title = "Test-App",
-            color = selectedColor,
-            showMenuIcon = true,
-            onMenuClick = { showMenu = true }
-        )
-        if (showMenu) {
-            ColorMenu(
-                expanded = showMenu,
-                onDismiss = { showMenu = false },
-                onColorSelect = { color ->
-                    onColorSelect(color)
-                    showMenu = false
                 }
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
-        BottomBar(color = selectedColor, navController = navController)
     }
 }
 
 @Composable
-fun ArticleScreen(navController: NavController, selectedColor: Color) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopBar(
-            title = "Artikel",
-            color = selectedColor,
-            showMenuIcon = false,
-            onMenuClick = {}
-        )
-        LazyColumn(
+fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
+    val scope = rememberCoroutineScope()
+    var articles by remember { mutableStateOf(listOf<Article>()) }
+    var newArticleName by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        db.articleDao().getAllArticles().collectLatest { articles = it }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Einkaufsliste", color = Color.White, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = selectedColor),
+                actions = {
+                    IconButton(onClick = { navController.navigate("edit_articles") }) {
+                        Icon(Icons.Filled.Add, contentDescription = "Artikel hinzufügen", tint = Color.White)
+                    }
+                }
+            )
+        },
+        bottomBar = { BottomBar(color = selectedColor, navController = navController) }
+    ) { padding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(horizontal = 16.dp)
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color.White)
         ) {
-            items(listOf(
-                "Milch", "Brot", "Eier", "Käse", "Äpfel",
-                "Bananen", "Joghurt", "Nudeln", "Tomaten", "Kartoffeln",
-                "Zwiebeln", "Hähnchen", "Reis", "Salat", "Butter",
-                "Haarspray", "Deo", "Küchenrolle", "Toilettenpapier",
-                "TK-Brezen", "Pizza", "Eis"
-            )) { item ->
-                Text(
-                    text = item,
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(articles) { article ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        elevation = CardDefaults.cardElevation(2.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = false,
+                                onCheckedChange = {},
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Column {
+                                Text(
+                                    text = article.name,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    text = "${article.category ?: "Keine Kategorie"} | ${article.stores ?: "Keine Geschäfte"}",
+                                    fontSize = 12.sp,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
-        Button(
-            onClick = { navController.popBackStack() },
+    }
+}
+
+@Composable
+fun EditArticlesScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
+    val scope = rememberCoroutineScope()
+    var articles by remember { mutableStateOf(listOf<Article>()) }
+    var newArticleName by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        db.articleDao().getAllArticles().collectLatest { articles = it }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Artikel bearbeiten", color = Color.White, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = selectedColor),
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Filled.Add,
+                            contentDescription = "Zurück",
+                            tint = Color.White
+                        )
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color.White)
         ) {
-            Text("Zurück")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = newArticleName,
+                    onValueChange = { newArticleName = it },
+                    label = { Text("Neuer Artikel") },
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = {
+                        if (newArticleName.isNotBlank()) {
+                            scope.launch {
+                                db.articleDao().insert(Article(name = newArticleName))
+                                newArticleName = ""
+                            }
+                        }
+                    }
+                ) {
+                    Text("Hinzufügen")
+                }
+            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(articles) { article ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = article.name,
+                            fontSize = 16.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    db.articleDao().delete(article)
+                                }
+                            }
+                        ) {
+                            Text("Löschen")
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -228,25 +329,29 @@ fun StoreScreen(navController: NavController, selectedColor: Color) {
 }
 
 @Composable
-fun TestApp() {
+fun TestApp(db: AppDatabase) {
     val navController = rememberNavController()
     var selectedColor by remember { mutableStateOf(Color.Blue) }
+    var showMenu by remember { mutableStateOf(false) }
 
     MaterialTheme {
-        NavHost(navController, startDestination = "main") {
-            composable("main") {
-                MainScreen(
-                    navController = navController,
-                    selectedColor = selectedColor,
-                    onColorSelect = { selectedColor = it }
-                )
+        NavHost(navController, startDestination = "shopping_list") {
+            composable("shopping_list") {
+                ShoppingListScreen(navController, selectedColor, db)
             }
-            composable("articles") {
-                ArticleScreen(navController = navController, selectedColor = selectedColor)
+            composable("edit_articles") {
+                EditArticlesScreen(navController, selectedColor, db)
             }
             composable("stores") {
-                StoreScreen(navController = navController, selectedColor = selectedColor)
+                StoreScreen(navController, selectedColor)
             }
+        }
+        if (showMenu) {
+            ColorMenu(
+                expanded = showMenu,
+                onDismiss = { showMenu = false },
+                onColorSelect = { selectedColor = it }
+            )
         }
     }
 }
