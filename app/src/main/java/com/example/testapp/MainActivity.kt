@@ -4,14 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,7 +35,8 @@ class MainActivity : ComponentActivity() {
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "app-database"
-        ).build()
+        ).fallbackToDestructiveMigration() // Für einfache Entwicklung
+            .build()
         setContent {
             TestAppTheme {
                 TestApp(db)
@@ -46,105 +45,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun TopBar(title: String, color: Color, showMenuIcon: Boolean, onMenuClick: () -> Unit) {
-    Surface(
-        color = color,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-        Box(
-            modifier = Modifier.padding(horizontal = 16.dp)
-        ) {
-            if (showMenuIcon) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterStart)
-                        .clickable { onMenuClick() }
-                )
-            }
-            Text(
-                text = title,
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-    }
-}
-
-@Composable
-fun BottomBar(color: Color, navController: NavController) {
-    Surface(
-        color = color,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Artikel",
-                color = Color.White,
-                fontSize = 16.sp,
-                modifier = Modifier.clickable { navController.navigate("edit_articles") }
-            )
-            Text(
-                text = "Geschäfte",
-                color = Color.White,
-                fontSize = 16.sp,
-                modifier = Modifier.clickable { navController.navigate("stores") }
-            )
-        }
-    }
-}
-
-@Composable
-fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -> Unit) {
-    val colors = listOf(
-        Color.Blue to "Blau",
-        Color.Red to "Rot",
-        Color.Green to "Grün",
-        Color.Yellow to "Gelb",
-        Color.Magenta to "Lila"
-    )
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { onDismiss() },
-        modifier = Modifier
-            .width(200.dp)
-            .background(Color.White)
-    ) {
-        colors.forEach { (color, name) ->
-            DropdownMenuItem(
-                text = { Text(name, color = Color.Black) },
-                onClick = {
-                    onColorSelect(color)
-                    onDismiss()
-                },
-                modifier = Modifier
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
+fun ShoppingListScreen(navController: NavController, db: AppDatabase) {
     val scope = rememberCoroutineScope()
     var articles by remember { mutableStateOf(listOf<Article>()) }
-    var showMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         db.articleDao().getAllArticles().collectLatest { articles = it }
@@ -154,15 +59,14 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Einkaufsliste", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = selectedColor),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Blue),
                 actions = {
                     IconButton(onClick = { navController.navigate("edit_articles") }) {
                         Icon(Icons.Filled.Add, contentDescription = "Artikel hinzufügen", tint = Color.White)
                     }
                 }
             )
-        },
-        bottomBar = { BottomBar(color = selectedColor, navController = navController) }
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -170,13 +74,6 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
                 .padding(padding)
                 .background(Color.White)
         ) {
-            if (showMenu) {
-                ColorMenu(
-                    expanded = showMenu,
-                    onDismiss = { showMenu = false },
-                    onColorSelect = { showMenu = false }
-                )
-            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -223,7 +120,7 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditArticlesScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
+fun EditArticlesScreen(navController: NavController, db: AppDatabase) {
     val scope = rememberCoroutineScope()
     var articles by remember { mutableStateOf(listOf<Article>()) }
     var newArticleName by remember { mutableStateOf("") }
@@ -236,7 +133,7 @@ fun EditArticlesScreen(navController: NavController, selectedColor: Color, db: A
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Artikel bearbeiten", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = selectedColor),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Blue),
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Zurück", tint = Color.White)
@@ -312,44 +209,16 @@ fun EditArticlesScreen(navController: NavController, selectedColor: Color, db: A
 }
 
 @Composable
-fun StoreScreen(navController: NavController, selectedColor: Color) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        TopBar(
-            title = "Geschäfte",
-            color = selectedColor,
-            showMenuIcon = false,
-            onMenuClick = {}
-        )
-        Button(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text("Zurück")
-        }
-    }
-}
-
-@Composable
 fun TestApp(db: AppDatabase) {
     val navController = rememberNavController()
-    var selectedColor by remember { mutableStateOf(Color.Blue) }
 
     MaterialTheme {
         NavHost(navController, startDestination = "shopping_list") {
             composable("shopping_list") {
-                ShoppingListScreen(navController, selectedColor, db)
+                ShoppingListScreen(navController, db)
             }
             composable("edit_articles") {
-                EditArticlesScreen(navController, selectedColor, db)
-            }
-            composable("stores") {
-                StoreScreen(navController, selectedColor)
+                EditArticlesScreen(navController, db)
             }
         }
     }
