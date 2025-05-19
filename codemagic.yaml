@@ -6,7 +6,7 @@ workflows:
     environment:
       java: 17
       vars:
-        ANDROID_SDK_TOOLS: "10406996_latest" # Neueste SDK-Tools
+        ANDROID_SDK_TOOLS: "10406996_latest"
     scripts:
       - name: Clean Gradle Cache
         script: |
