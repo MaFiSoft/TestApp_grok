@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android") version "2.0.20"
+    id("org.jetbrains.kotlin.android") version "1.9.25"
 }
 
 android {
@@ -32,7 +32,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.17"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 }
 
@@ -45,5 +45,5 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
     implementation("androidx.navigation:navigation-compose:2.8.3")
-    implementation("androidx.compose.compiler:compiler:1.5.17")
+    implementation("androidx.compose.compiler:compiler:1.5.15")
 }
