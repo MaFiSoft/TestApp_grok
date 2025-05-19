@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -97,7 +98,7 @@ fun BottomBar(color: Color, navController: NavController) {
                 text = "Artikel",
                 color = Color.White,
                 fontSize = 16.sp,
-                modifier = Modifier.clickable { navController.navigate("articles") }
+                modifier = Modifier.clickable { navController.navigate("edit_articles") }
             )
             Text(
                 text = "Geschäfte",
@@ -131,7 +132,8 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
                 onClick = {
                     onColorSelect(color)
                     onDismiss()
-                }
+                },
+                modifier = Modifier
             )
         }
     }
@@ -141,7 +143,7 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
 fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
     val scope = rememberCoroutineScope()
     var articles by remember { mutableStateOf(listOf<Article>()) }
-    var newArticleName by remember { mutableStateOf("") }
+    var showMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         db.articleDao().getAllArticles().collectLatest { articles = it }
@@ -149,12 +151,12 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Einkaufsliste", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = selectedColor),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = selectedColor),
                 actions = {
-                    IconButton(onClick = { navController.navigate("edit_articles") }) {
-                        Icon(Icons.Filled.Add, contentDescription = "Artikel hinzufügen", tint = Color.White)
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = Color.White)
                     }
                 }
             )
@@ -167,6 +169,13 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
                 .padding(padding)
                 .background(Color.White)
         ) {
+            if (showMenu) {
+                ColorMenu(
+                    expanded = showMenu,
+                    onDismiss = { showMenu = false },
+                    onColorSelect = { selectedColor = it; showMenu = false }
+                )
+            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -178,7 +187,7 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
-                        elevation = CardDefaults.cardElevation(2.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -223,16 +232,12 @@ fun EditArticlesScreen(navController: NavController, selectedColor: Color, db: A
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Artikel bearbeiten", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = selectedColor),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = selectedColor),
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Filled.Add,
-                            contentDescription = "Zurück",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Zurück", tint = Color.White)
                     }
                 }
             )
@@ -332,7 +337,6 @@ fun StoreScreen(navController: NavController, selectedColor: Color) {
 fun TestApp(db: AppDatabase) {
     val navController = rememberNavController()
     var selectedColor by remember { mutableStateOf(Color.Blue) }
-    var showMenu by remember { mutableStateOf(false) }
 
     MaterialTheme {
         NavHost(navController, startDestination = "shopping_list") {
@@ -345,13 +349,6 @@ fun TestApp(db: AppDatabase) {
             composable("stores") {
                 StoreScreen(navController, selectedColor)
             }
-        }
-        if (showMenu) {
-            ColorMenu(
-                expanded = showMenu,
-                onDismiss = { showMenu = false },
-                onColorSelect = { selectedColor = it }
-            )
         }
     }
 }
