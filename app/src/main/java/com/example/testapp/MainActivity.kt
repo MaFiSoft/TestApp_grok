@@ -176,7 +176,11 @@ fun ArticleScreen(navController: NavController, selectedColor: Color) {
                 .weight(1f)
                 .padding(horizontal = 16.dp)
         ) {
-            items(listOf("Milch", "Brot", "Eier", "Käse", "Äpfel")) { item ->
+            items(listOf(
+                "Milch", "Brot", "Eier", "Käse", "Äpfel",
+                "Bananen", "Joghurt", "Nudeln", "Tomaten", "Kartoffeln",
+                "Zwiebeln", "Hähnchen", "Reis", "Salat", "Butter"
+            )) { item ->
                 Text(
                     text = item,
                     fontSize = 18.sp,
