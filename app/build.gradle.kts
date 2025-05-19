@@ -48,9 +48,5 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
-    implementation("androidx.navigation:navigation-compose:2.8.3")
     implementation("androidx.compose.compiler:compiler:1.5.15")
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
 }
