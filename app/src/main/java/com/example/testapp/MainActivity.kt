@@ -34,6 +34,7 @@ fun ShoppingListScreen() {
     var items by remember { mutableStateOf(listOf<String>()) }
     var newItem by remember { mutableStateOf("") }
 
+    println("ShoppingListScreen: Composable started")
     Column(
         modifier = Modifier
             .fillMaxSize()
