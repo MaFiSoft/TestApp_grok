@@ -17,8 +17,8 @@ workflows:
       - name: Install Android SDK Tools
         script: |
           mkdir -p /tmp/android-sdk/cmdline-tools/latest
-          wget https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}.zip
-          unzip commandlinetools-linux-${ANDROID_SDK_TOOLS}.zip -d /tmp/android-sdk/cmdline-tools/latest
+          wget --retry-connrefused --waitretry=1 --timeout=20 -O commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}.zip
+          unzip commandlinetools.zip -d /tmp/android-sdk/cmdline-tools/latest
           mv /tmp/android-sdk/cmdline-tools/latest/cmdline-tools/* /tmp/android-sdk/cmdline-tools/latest/
           export ANDROID_HOME=/tmp/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
@@ -31,11 +31,15 @@ workflows:
           ls -l /Library/Java/JavaVirtualMachines/
       - name: Install Gradle 8.3
         script: |
-          wget https://services.gradle.org/distributions/gradle-8.3-all.zip
-          unzip gradle-8.3-all.zip -d /tmp
+          echo "Starting Gradle 8.3 download"
+          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.3-all.zip https://services.gradle.org/distributions/gradle-8.3-all.zip
+          echo "Download complete, starting unzip"
+          unzip -o gradle-8.3-all.zip -d /tmp
+          echo "Unzip complete"
           export GRADLE_HOME=/tmp/gradle-8.3
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
+          echo "Gradle installation complete"
       - name: Generate Gradle Wrapper
         script: |
           /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type all
