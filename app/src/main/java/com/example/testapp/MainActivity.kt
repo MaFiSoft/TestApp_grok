@@ -179,7 +179,9 @@ fun ArticleScreen(navController: NavController, selectedColor: Color) {
             items(listOf(
                 "Milch", "Brot", "Eier", "Käse", "Äpfel",
                 "Bananen", "Joghurt", "Nudeln", "Tomaten", "Kartoffeln",
-                "Zwiebeln", "Hähnchen", "Reis", "Salat", "Butter"
+                "Zwiebeln", "Hähnchen", "Reis", "Salat", "Butter",
+                "Haarspray", "Deo", "Küchenrolle", "Toilettenpapier",
+                "TK-Brezen", "Pizza", "Eis"
             )) { item ->
                 Text(
                     text = item,
