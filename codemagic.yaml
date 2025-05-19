@@ -17,16 +17,16 @@ workflows:
           java -version
           echo $JAVA_HOME
           ls -l /Library/Java/JavaVirtualMachines/
-      - name: Install Gradle 8.2
+      - name: Install Gradle 8.3
         script: |
-          wget https://services.gradle.org/distributions/gradle-8.2-all.zip
-          unzip gradle-8.2-all.zip -d /tmp
-          export GRADLE_HOME=/tmp/gradle-8.2
+          wget https://services.gradle.org/distributions/gradle-8.3-all.zip
+          unzip gradle-8.3-all.zip -d /tmp
+          export GRADLE_HOME=/tmp/gradle-8.3
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
       - name: Generate Gradle Wrapper
         script: |
-          /tmp/gradle-8.2/bin/gradle wrapper --gradle-version 8.2 --distribution-type all
+          /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type all
       - name: Set Execute Permissions
         script: |
           chmod +x ./gradlew
