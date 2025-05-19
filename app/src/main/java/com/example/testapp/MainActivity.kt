@@ -139,6 +139,7 @@ fun ColorMenu(expanded: Boolean, onDismiss: () -> Unit, onColorSelect: (Color) -
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
     val scope = rememberCoroutineScope()
@@ -155,8 +156,8 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
                 title = { Text("Einkaufsliste", color = Color.White, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = selectedColor),
                 actions = {
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = Color.White)
+                    IconButton(onClick = { navController.navigate("edit_articles") }) {
+                        Icon(Icons.Filled.Add, contentDescription = "Artikel hinzufügen", tint = Color.White)
                     }
                 }
             )
@@ -173,7 +174,7 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
                 ColorMenu(
                     expanded = showMenu,
                     onDismiss = { showMenu = false },
-                    onColorSelect = { selectedColor = it; showMenu = false }
+                    onColorSelect = { showMenu = false }
                 )
             }
             LazyColumn(
@@ -220,6 +221,7 @@ fun ShoppingListScreen(navController: NavController, selectedColor: Color, db: A
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditArticlesScreen(navController: NavController, selectedColor: Color, db: AppDatabase) {
     val scope = rememberCoroutineScope()
