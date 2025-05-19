@@ -15,26 +15,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.Room
+import com.example.testapp.data.AppDatabase
+import com.example.testapp.data.Article
 import com.example.testapp.ui.theme.TestAppTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         println("MainActivity: onCreate started")
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "app-database"
+        ).fallbackToDestructiveMigration().build()
+        println("MainActivity: Database initialized")
         setContent {
             TestAppTheme {
-                ShoppingListScreen()
+                ShoppingListScreen(db)
             }
         }
     }
 }
 
 @Composable
-fun ShoppingListScreen() {
-    var items by remember { mutableStateOf(listOf<String>()) }
+fun ShoppingListScreen(db: AppDatabase) {
+    println("ShoppingListScreen: Composable started")
+    val scope = rememberCoroutineScope()
+    var items by remember { mutableStateOf(listOf<Article>()) }
     var newItem by remember { mutableStateOf("") }
 
-    println("ShoppingListScreen: Composable started")
+    LaunchedEffect(Unit) {
+        println("ShoppingListScreen: LaunchedEffect started")
+        db.articleDao().getAllArticles().collect { articles ->
+            println("ShoppingListScreen: Articles collected, size=${articles.size}")
+            items = articles
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,8 +79,11 @@ fun ShoppingListScreen() {
             Button(
                 onClick = {
                     if (newItem.isNotBlank()) {
-                        items = items + newItem
-                        newItem = ""
+                        scope.launch {
+                            println("ShoppingListScreen: Inserting article=$newItem")
+                            db.articleDao().insert(Article(name = newItem))
+                            newItem = ""
+                        }
                     }
                 }
             ) {
@@ -88,13 +109,18 @@ fun ShoppingListScreen() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = item,
+                            text = item.name,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.weight(1f)
                         )
                         Button(
-                            onClick = { items = items.filter { it != item } }
+                            onClick = {
+                                scope.launch {
+                                    println("ShoppingListScreen: Deleting article=${item.name}")
+                                    db.articleDao().delete(item)
+                                }
+                            }
                         ) {
                             Text("Löschen")
                         }
