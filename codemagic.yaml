@@ -5,6 +5,9 @@ workflows:
     max_build_duration: 60
     environment:
       java: 17
+      android:
+        build_tools: 34.0.0
+        sdk_tools: 10406996_latest # Neueste SDK-Tools (9123335_latest oder höher)
     scripts:
       - name: Clean Gradle Cache
         script: |
