@@ -5,9 +5,8 @@ workflows:
     max_build_duration: 60
     environment:
       java: 17
-      android:
-        build_tools: 34.0.0
-        sdk_tools: 10406996_latest # Neueste SDK-Tools (9123335_latest oder höher)
+      vars:
+        ANDROID_SDK_TOOLS: "10406996_latest" # Neueste SDK-Tools
     scripts:
       - name: Clean Gradle Cache
         script: |
@@ -15,6 +14,14 @@ workflows:
           rm -rf ~/.gradle/wrapper/
           rm -rf gradle/
           rm -rf /tmp/gradle-*
+      - name: Install Android SDK Tools
+        script: |
+          wget https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}.zip
+          unzip commandlinetools-linux-${ANDROID_SDK_TOOLS}.zip -d /tmp/android-sdk
+          export ANDROID_HOME=/tmp/android-sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/bin:$PATH
+          yes | sdkmanager --licenses
+          sdkmanager "build-tools;34.0.0" "platforms;android-34"
       - name: Debug Java Environment
         script: |
           java -version
