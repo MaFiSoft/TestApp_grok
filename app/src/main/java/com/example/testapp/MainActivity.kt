@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testapp.ui.theme.TestAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,86 +37,79 @@ fun ShoppingListScreen(context: Context) {
     var items by remember { mutableStateOf(prefs.getStringSet("items", emptySet())?.toList() ?: emptyList()) }
     var newItem by remember { mutableStateOf("") }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Einkaufsliste", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Einkaufsliste",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.primary
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = newItem,
+                onValueChange = { newItem = it },
+                label = { Text("Neuer Artikel") },
+                modifier = Modifier.weight(1f)
             )
-        },
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-                    .padding(padding)
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = newItem,
-                        onValueChange = { newItem = it },
-                        label = { Text("Neuer Artikel") },
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(
-                        onClick = {
-                            if (newItem.isNotBlank()) {
-                                println("ShoppingListScreen: Adding item=$newItem")
-                                items = items + newItem
-                                prefs.edit().putStringSet("items", items.toSet()).apply()
-                                newItem = ""
-                            }
-                        }
-                    ) {
-                        Text("Hinzufügen")
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    if (newItem.isNotBlank()) {
+                        println("ShoppingListScreen: Adding item=$newItem")
+                        items = items + newItem
+                        prefs.edit().putStringSet("items", items.toSet()).apply()
+                        newItem = ""
                     }
                 }
-                LazyColumn(
+            ) {
+                Text("Hinzufügen")
+            }
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            items(items) { item ->
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
+                        .padding(vertical = 4.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    items(items) { item ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = item,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Button(
-                                    onClick = {
-                                        println("ShoppingListScreen: Deleting item=$item")
-                                        items = items.filter { it != item }
-                                        prefs.edit().putStringSet("items", items.toSet()).apply()
-                                    }
-                                ) {
-                                    Text("Löschen")
-                                }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = item,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Button(
+                            onClick = {
+                                println("ShoppingListScreen: Deleting item=$item")
+                                items = items.filter { it != item }
+                                prefs.edit().putStringSet("items", items.toSet()).apply()
                             }
+                        ) {
+                            Text("Löschen")
                         }
                     }
                 }
             }
         }
-    )
+    }
 }
