@@ -1,4 +1,12 @@
-// Stand: 2025-05-20_22:45
+// Stand: 2025-05-20_22:50
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
