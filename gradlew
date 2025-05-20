@@ -1,4 +1,3 @@
-#altes Backup
 #!/bin/sh
 
 #
