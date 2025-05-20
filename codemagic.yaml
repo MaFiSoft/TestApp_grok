@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_23:15
+# Stand: 2025-05-20_23:25
 workflows:
   android-workflow:
     name: Android Build
@@ -73,7 +73,7 @@ workflows:
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
-          ./gradlew dependencies --refresh-dependencies --stacktrace --info || exit 1
+          ./gradlew build --refresh-dependencies --stacktrace --info || exit 1
       - name: Debug Kotlin Plugin
         script: |
           echo "Checking Kotlin plugin"
@@ -93,4 +93,19 @@ workflows:
         script: |
           echo "Manually cleaning build cache"
           rm -rf ~/.gradle/caches/build-cache-*
-          echo
+          echo "Build cache cleaned manually"
+      - name: Debug Resources
+        script: |
+          ls -l app/src/main/res/
+          ls -l app/src/main/res/mipmap-anydpi-v26/
+          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          cat app/src/main/res/values/themes.xml
+      - name: Debug Dependencies
+        script: |
+          echo "Running dependencies check"
+          ./gradlew :app:dependencies --stacktrace --info
+      - name: Debug Kotlin Compilation
+        script: |
+          echo "Running Kotlin compilation"
+          ./gradlew :
