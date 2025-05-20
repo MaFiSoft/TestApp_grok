@@ -6,7 +6,7 @@ workflows:
     environment:
       java: 17
       vars:
-        ANDROID_SDK_TOOLS: "11076708_latest" # Neueste CommandLineTools (~2025)
+        ANDROID_SDK_TOOLS: "10406996_latest"
     scripts:
       - name: Clean Gradle Cache
         script: |
@@ -14,6 +14,7 @@ workflows:
           rm -rf ~/.gradle/wrapper/
           rm -rf gradle/
           rm -rf /tmp/gradle-*
+          echo "Gradle cache cleared"
       - name: Install Android SDK Tools
         script: |
           mkdir -p /tmp/android-sdk/cmdline-tools/latest
@@ -23,26 +24,27 @@ workflows:
           export ANDROID_HOME=/tmp/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
           yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses
-          sdkmanager --sdk_root=$ANDROID_HOME "build-tools;35.0.0" "platforms;android-35"
+          sdkmanager --sdk_root=$ANDROID_HOME "build-tools;34.0.0" "platforms;android-34"
       - name: Debug Java Environment
         script: |
           java -version
           echo $JAVA_HOME
           ls -l /Library/Java/JavaVirtualMachines/
-      - name: Install Gradle 8.7
+      - name: Install Gradle 8.3
         script: |
-          echo "Starting Gradle 8.7 download"
-          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.7-all.zip https://services.gradle.org/distributions/gradle-8.7-all.zip
+          echo "Starting Gradle 8.3 download"
+          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.3-all.zip https://services.gradle.org/distributions/gradle-8.3-all.zip
           echo "Download complete, starting unzip"
-          unzip -o gradle-8.7-all.zip -d /tmp
+          unzip -o gradle-8.3-all.zip -d /tmp
           echo "Unzip complete"
-          export GRADLE_HOME=/tmp/gradle-8.7
+          export GRADLE_HOME=/tmp/gradle-8.3
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
           echo "Gradle installation complete"
       - name: Generate Gradle Wrapper
         script: |
-          /tmp/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type all
+          /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type all
+          echo "Wrapper generated with Gradle 8.3"
       - name: Set Execute Permissions
         script: |
           chmod +x ./gradlew
@@ -53,6 +55,10 @@ workflows:
           ls -l
           ls -l gradle/wrapper/
           cat gradle/wrapper/gradle-wrapper.properties
+      - name: Clean Build Cache
+        script: |
+          ./gradlew cleanBuildCache
+          echo "Build cache cleared"
       - name: Debug Resources
         script: |
           ls -l app/src/main/res/
