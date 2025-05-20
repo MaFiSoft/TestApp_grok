@@ -1,4 +1,4 @@
-// Stand: 2025-05-20_22:50
+// Stand: 2025-05-20_23:00
 pluginManagement {
     repositories {
         google()
