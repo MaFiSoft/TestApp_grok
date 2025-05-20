@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_21:24
+# Stand: 2025-05-20_21:45
 workflows:
   android-workflow:
     name: Android Build
@@ -14,9 +14,8 @@ workflows:
           rm -rf ~/.gradle/caches/
           rm -rf ~/.gradle/wrapper/
           rm -rf ~/.kotlin/
-          rm -rf /tmp/*
           rm -rf ~/.m2/repository/
-          echo "Gradle, Kotlin, Maven, and temp caches cleared"
+          echo "Gradle, Kotlin, Maven caches cleared"
       - name: Install Android SDK Tools
         script: |
           mkdir -p /tmp/android-sdk/cmdline-tools/latest
@@ -30,15 +29,15 @@ workflows:
       - name: Setup Java Environment
         script: |
           export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar:/tmp/gradle-8.3/lib/kotlin-compiler-embeddable-2.0.0.jar:/tmp/gradle-8.3/lib/gradle-base-services-8.3.jar:/tmp/gradle-8.3/lib/gradle-core-8.3.jar:/tmp/gradle-8.3/lib/plugins/android.jar:/tmp/gradle-8.3/lib/plugins/gradle-build-8.3.jar
+          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
           echo "CLASSPATH=$CLASSPATH"
           ls -l /Library/Java/JavaVirtualMachines/
       - name: Install Gradle 8.3
         script: |
-          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.3-all.zip https://services.gradle.org/distributions/gradle-8.3-all.zip
-          unzip -o gradle-8.3-all.zip -d /tmp
+          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.3-bin.zip https://services.gradle.org/distributions/gradle-8.3-bin.zip
+          unzip -o gradle-8.3-bin.zip -d /tmp
           export GRADLE_HOME=/tmp/gradle-8.3
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
@@ -48,7 +47,7 @@ workflows:
             echo "Using existing Gradle wrapper files from repository"
           else
             echo "Generating Gradle wrapper"
-            /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type all
+            /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type bin
           fi
       - name: Set Execute Permissions
         script: |
@@ -64,27 +63,31 @@ workflows:
           ls -l gradle/wrapper/
           file gradle/wrapper/gradle-wrapper.jar
           du -h gradle/wrapper/gradle-wrapper.jar
-          java -cp gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain --version || echo "Error running gradle-wrapper.jar"
+          java -cp gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain --version
       - name: Check Gradle Environment
         script: |
           java -version
-          ./gradlew --version || echo "Error running gradlew --version"
+          ./gradlew --version
           ls -l gradle/wrapper/
           cat gradle/wrapper/gradle-wrapper.properties
+      - name: Sync Dependencies
+        script: |
+          echo "Synchronizing Gradle dependencies"
+          ./gradlew build --refresh-dependencies --stacktrace --info
       - name: Debug Kotlin Plugin
         script: |
           echo "Checking Kotlin plugin"
-          ./gradlew --version | grep Kotlin || echo "Kotlin plugin version not found"
-          ./gradlew tasks --all | grep compileDebugKotlin || echo "compileDebugKotlin task not found"
+          ./gradlew --version | grep Kotlin
+          ./gradlew tasks --all | grep compileDebugKotlin
       - name: Debug Android Plugin
         script: |
           echo "Checking Android Gradle Plugin"
-          ./gradlew tasks --all | grep assembleDebug || echo "assembleDebug task not found"
-          ls -l ~/.m2/repository/com/android/tools/build/ || echo "AGP Maven artifacts not found"
+          ./gradlew tasks --all | grep assembleDebug
+          ls -l ~/.m2/repository/com/android/tools/build/
       - name: Clean Build Cache
         script: |
           echo "Manually cleaning build cache"
-          rm -rf ~/.gradle/caches/build-cache-* || echo "No build cache found"
+          rm -rf ~/.gradle/caches/build-cache-*
           echo "Build cache cleaned manually"
       - name: Debug Resources
         script: |
@@ -96,14 +99,14 @@ workflows:
       - name: Debug Dependencies
         script: |
           echo "Running dependencies check"
-          ./gradlew :app:dependencies --stacktrace --info || echo "Dependencies check failed, continuing"
+          ./gradlew :app:dependencies --stacktrace --info
       - name: Debug Kotlin Compilation
         script: |
           echo "Running Kotlin compilation"
-          ./gradlew :app:compileDebugKotlin --stacktrace --info || echo "Kotlin compilation failed, continuing"
+          ./gradlew :app:compileDebugKotlin --stacktrace --info
       - name: Build Debug APK
         script: |
           echo "Running assembleDebug"
-          ./gradlew assembleDebug --stacktrace --info || echo "assembleDebug failed"
+          ./gradlew assembleDebug --stacktrace --info
     artifacts:
       - app/build/outputs/apk/debug/app-debug.apk
