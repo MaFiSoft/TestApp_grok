@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_23:25
+# Stand: 2025-05-20_23:30
 workflows:
   android-workflow:
     name: Android Build
@@ -9,13 +9,6 @@ workflows:
       vars:
         ANDROID_SDK_TOOLS: "10406996_latest"
     scripts:
-      - name: Clean Gradle and Kotlin Cache
-        script: |
-          rm -rf ~/.gradle/caches/
-          rm -rf ~/.gradle/wrapper/
-          rm -rf ~/.kotlin/
-          rm -rf ~/.m2/repository/
-          echo "Gradle, Kotlin, Maven caches cleared"
       - name: Install Android SDK Tools
         script: |
           mkdir -p /tmp/android-sdk/cmdline-tools/latest
@@ -31,7 +24,6 @@ workflows:
           export JAVA_HOME=$(/usr/libexec/java_home -v 17)
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
-          ls -l /Library/Java/JavaVirtualMachines/
       - name: Install Gradle 8.7
         script: |
           wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.7-bin.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
@@ -52,60 +44,13 @@ workflows:
             echo "Error: gradlew not found"
             exit 1
           fi
-      - name: Debug Gradle Wrapper
-        script: |
-          echo "Checking Gradle wrapper integrity"
-          ls -l gradle/wrapper/
-          if [ -f gradle/wrapper/gradle-wrapper.jar ]; then
-            file gradle/wrapper/gradle-wrapper.jar
-            du -h gradle/wrapper/gradle-wrapper.jar
-            java -cp gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain --version
-          else
-            echo "Error: gradle-wrapper.jar not found"
-            exit 1
-          fi
-      - name: Check Gradle Environment
-        script: |
-          java -version
-          ./gradlew --version
-          ls -l gradle/wrapper/
-          cat gradle/wrapper/gradle-wrapper.properties
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
           ./gradlew build --refresh-dependencies --stacktrace --info || exit 1
-      - name: Debug Kotlin Plugin
+      - name: Build Debug APK
         script: |
-          echo "Checking Kotlin plugin"
-          ./gradlew --version | grep Kotlin
-          ./gradlew tasks --all | grep compileDebugKotlin
-      - name: Debug Android Plugin
-        script: |
-          echo "Checking Android Gradle Plugin"
-          ./gradlew tasks --all | grep assembleDebug
-          if [ -d ~/.m2/repository/com/android/tools/build/ ]; then
-            ls -l ~/.m2/repository/com/android/tools/build/
-          else
-            echo "Error: AGP Maven artifacts not found"
-            exit 1
-          fi
-      - name: Clean Build Cache
-        script: |
-          echo "Manually cleaning build cache"
-          rm -rf ~/.gradle/caches/build-cache-*
-          echo "Build cache cleaned manually"
-      - name: Debug Resources
-        script: |
-          ls -l app/src/main/res/
-          ls -l app/src/main/res/mipmap-anydpi-v26/
-          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-          cat app/src/main/res/values/themes.xml
-      - name: Debug Dependencies
-        script: |
-          echo "Running dependencies check"
-          ./gradlew :app:dependencies --stacktrace --info
-      - name: Debug Kotlin Compilation
-        script: |
-          echo "Running Kotlin compilation"
-          ./gradlew :
+          echo "Running assembleDebug"
+          ./gradlew assembleDebug --stacktrace --info || exit 1
+    artifacts:
+      - app/build/outputs/apk/debug/app-debug.apk
