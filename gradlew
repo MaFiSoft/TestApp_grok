@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_15:59
+#altes Backup
 #!/bin/sh
 
 #
