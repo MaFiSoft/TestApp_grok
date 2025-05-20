@@ -1,4 +1,3 @@
-@altes Backup
 package com.example.testapp
 
 import android.content.Context
