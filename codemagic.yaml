@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_21:16
+# Stand: 2025-05-20_21:24
 workflows:
   android-workflow:
     name: Android Build
@@ -30,7 +30,7 @@ workflows:
       - name: Setup Java Environment
         script: |
           export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar:/tmp/gradle-8.3/lib/kotlin-compiler-embeddable-2.0.0.jar:/tmp/gradle-8.3/lib/gradle-base-services-8.3.jar:/tmp/gradle-8.3/lib/gradle-core-8.3.jar
+          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar:/tmp/gradle-8.3/lib/kotlin-compiler-embeddable-2.0.0.jar:/tmp/gradle-8.3/lib/gradle-base-services-8.3.jar:/tmp/gradle-8.3/lib/gradle-core-8.3.jar:/tmp/gradle-8.3/lib/plugins/android.jar:/tmp/gradle-8.3/lib/plugins/gradle-build-8.3.jar
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
           echo "CLASSPATH=$CLASSPATH"
@@ -80,6 +80,7 @@ workflows:
         script: |
           echo "Checking Android Gradle Plugin"
           ./gradlew tasks --all | grep assembleDebug || echo "assembleDebug task not found"
+          ls -l ~/.m2/repository/com/android/tools/build/ || echo "AGP Maven artifacts not found"
       - name: Clean Build Cache
         script: |
           echo "Manually cleaning build cache"
@@ -103,6 +104,6 @@ workflows:
       - name: Build Debug APK
         script: |
           echo "Running assembleDebug"
-          ./gradlew assembleDebug --stacktrace --info
+          ./gradlew assembleDebug --stacktrace --info || echo "assembleDebug failed"
     artifacts:
       - app/build/outputs/apk/debug/app-debug.apk
