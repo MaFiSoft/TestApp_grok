@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_23:00
+# Stand: 2025-05-20_23:05
 workflows:
   android-workflow:
     name: Android Build
@@ -32,17 +32,17 @@ workflows:
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
           ls -l /Library/Java/JavaVirtualMachines/
-      - name: Install Gradle 8.4
+      - name: Install Gradle 8.7
         script: |
-          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.4-bin.zip https://services.gradle.org/distributions/gradle-8.4-bin.zip
-          unzip -o gradle-8.4-bin.zip -d /tmp
-          export GRADLE_HOME=/tmp/gradle-8.4
+          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.7-bin.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -o gradle-8.7-bin.zip -d /tmp
+          export GRADLE_HOME=/tmp/gradle-8.7
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
       - name: Generate Gradle Wrapper
         script: |
           echo "Generating Gradle wrapper"
-          /tmp/gradle-8.4/bin/gradle wrapper --gradle-version 8.4 --distribution-type bin || exit 1
+          /tmp/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin || exit 1
           ls -l gradle/wrapper/
       - name: Set Execute Permissions
         script: |
