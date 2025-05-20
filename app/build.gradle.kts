@@ -1,4 +1,3 @@
-// Stand: 2025-05-20_15:59
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android") version "2.0.0"
