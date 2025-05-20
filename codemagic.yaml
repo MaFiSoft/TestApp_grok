@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_21:45
+# Stand: 2025-05-20_22:15
 workflows:
   android-workflow:
     name: Android Build
@@ -29,10 +29,8 @@ workflows:
       - name: Setup Java Environment
         script: |
           export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
-          echo "CLASSPATH=$CLASSPATH"
           ls -l /Library/Java/JavaVirtualMachines/
       - name: Install Gradle 8.3
         script: |
@@ -43,12 +41,9 @@ workflows:
           gradle --version
       - name: Generate Gradle Wrapper
         script: |
-          if [ -f gradle/wrapper/gradle-wrapper.properties ] && [ -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Using existing Gradle wrapper files from repository"
-          else
-            echo "Generating Gradle wrapper"
-            /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type bin
-          fi
+          echo "Generating Gradle wrapper"
+          /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type bin
+          ls -l gradle/wrapper/
       - name: Set Execute Permissions
         script: |
           if [ -f gradlew ]; then
