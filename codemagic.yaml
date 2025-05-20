@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_20:59
+# Stand: 2025-05-20_21:10
 workflows:
   android-workflow:
     name: Android Build
@@ -30,7 +30,7 @@ workflows:
       - name: Setup Java Environment
         script: |
           export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar
+          export CLASSPATH=$PWD/gradle/wrapper/gradle-wrapper.jar:/tmp/gradle-8.3/lib/kotlin-compiler-embeddable-2.0.0.jar
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
           echo "CLASSPATH=$CLASSPATH"
@@ -71,12 +71,11 @@ workflows:
           ./gradlew --version || echo "Error running gradlew --version"
           ls -l gradle/wrapper/
           cat gradle/wrapper/gradle-wrapper.properties
-      - name: Debug Gradle Tasks
+      - name: Debug Kotlin Plugin
         script: |
-          echo "Checking Gradle wrapper functionality"
-          ./gradlew --version
-          echo "Checking available Gradle tasks"
-          ./gradlew tasks || echo "Failed to list tasks"
+          echo "Checking Kotlin plugin"
+          ./gradlew --version | grep Kotlin || echo "Kotlin plugin version not found"
+          ./gradlew tasks --all | grep compileDebugKotlin || echo "compileDebugKotlin task not found"
       - name: Clean Build Cache
         script: |
           echo "Manually cleaning build cache"
@@ -95,7 +94,8 @@ workflows:
           ./gradlew :app:dependencies --stacktrace --info || echo "Dependencies check failed, continuing"
       - name: Debug Kotlin Compilation
         script: |
-          ./gradlew :app:compileDebugKotlin --stacktrace --info
+          echo "Running Kotlin compilation"
+          ./gradlew :app:compileDebugKotlin --stacktrace --info || echo "Kotlin compilation failed, continuing"
       - name: Build Debug APK
         script: |
           ./gradlew assembleDebug --stacktrace --info
