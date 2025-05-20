@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_20:24
+# Stand: 2025-05-20_20:32
 workflows:
   android-workflow:
     name: Android Build
@@ -56,6 +56,12 @@ workflows:
             echo "Error: gradlew not found"
             exit 1
           fi
+      - name: Debug Gradle Wrapper
+        script: |
+          echo "Checking Gradle wrapper integrity"
+          ls -l gradle/wrapper/
+          file gradle/wrapper/gradle-wrapper.jar
+          java -jar gradle/wrapper/gradle-wrapper.jar --version || echo "Error running gradle-wrapper.jar"
       - name: Check Gradle Environment
         script: |
           java -version
@@ -64,9 +70,11 @@ workflows:
           cat gradle/wrapper/gradle-wrapper.properties
       - name: Debug Gradle Tasks
         script: |
+          echo "Checking Gradle wrapper functionality"
+          ./gradlew --version
           echo "Checking available Gradle tasks"
-          ./gradlew tasks --all | grep assembleDebug || echo "assembleDebug task not found"
-          ./gradlew :app:dependencies --stacktrace --info
+          ./gradlew tasks --all || echo "Failed to list tasks"
+          ./gradlew :app:dependencies --stacktrace --info || echo "Failed to run dependencies"
       - name: Clean Build Cache
         script: |
           ./gradlew cleanBuildCache
