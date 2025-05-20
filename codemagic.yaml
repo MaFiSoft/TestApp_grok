@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_15:12
+# Stand: 2025-05-20_15:59
 workflows:
   android-workflow:
     name: Android Build
@@ -15,7 +15,8 @@ workflows:
           rm -rf ~/.gradle/wrapper/
           rm -rf /tmp/gradle-*
           rm -rf gradle/wrapper/gradle-wrapper.jar
-          echo "Gradle cache and wrapper cleared"
+          rm -rf ~/.m2/repository/
+          echo "Gradle and Maven caches cleared"
       - name: Install Android SDK Tools
         script: |
           mkdir -p /tmp/android-sdk/cmdline-tools/latest
@@ -47,9 +48,13 @@ workflows:
           if [ -f gradle/wrapper/gradle-wrapper.properties ]; then
             echo "Using existing gradle-wrapper.properties from repository"
             /tmp/gradle-8.3/bin/gradle wrapper --gradle-version 8.3 --distribution-type all
+            if [ $? -ne 0 ]; then
+              echo "Error: Gradle wrapper generation failed"
+              exit 1
+            fi
             echo "Wrapper regenerated with Gradle 8.3"
             ls -l gradle/wrapper/
-            [ -f gradle/wrapper/gradle-wrapper.jar ] && echo "gradle-wrapper.jar exists" || echo "gradle-wrapper.jar missing"
+            [ -f gradle/wrapper/gradle-wrapper.jar ] && echo "gradle-wrapper.jar exists" || { echo "gradle-wrapper.jar missing"; exit 1; }
             sha256sum gradle/wrapper/gradle-wrapper.jar || echo "sha256sum not available"
           else
             echo "Error: gradle-wrapper.properties not found"
