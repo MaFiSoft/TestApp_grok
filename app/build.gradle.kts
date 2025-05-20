@@ -1,7 +1,7 @@
+// Stand: 2025-05-20_15:59
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android") version "2.0.0"
-    id("kotlin-kapt")
 }
 
 android {
@@ -49,8 +49,4 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
-    // Room dependencies
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
 }
