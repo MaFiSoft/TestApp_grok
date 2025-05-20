@@ -1,4 +1,4 @@
-@rem Stand: 2025-05-20_15:59
+@rem altes Backup
 @rem
 @rem Copyright 2015 the original author or authors.
 @rem
