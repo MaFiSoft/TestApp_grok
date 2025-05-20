@@ -1,5 +1,6 @@
 package com.example.testapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,18 +24,19 @@ class MainActivity : ComponentActivity() {
         println("MainActivity: onCreate started")
         setContent {
             TestAppTheme {
-                ShoppingListScreen()
+                ShoppingListScreen(this)
             }
         }
     }
 }
 
 @Composable
-fun ShoppingListScreen() {
-    var items by remember { mutableStateOf(listOf<String>()) }
+fun ShoppingListScreen(context: Context) {
+    println("ShoppingListScreen: Composable started")
+    val prefs = context.getSharedPreferences("articles", Context.MODE_PRIVATE)
+    var items by remember { mutableStateOf(prefs.getStringSet("items", emptySet())?.toList() ?: emptyList()) }
     var newItem by remember { mutableStateOf("") }
 
-    println("ShoppingListScreen: Composable started")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +47,8 @@ fun ShoppingListScreen() {
             text = "Einkaufsliste",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.primary
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -61,7 +64,9 @@ fun ShoppingListScreen() {
             Button(
                 onClick = {
                     if (newItem.isNotBlank()) {
+                        println("ShoppingListScreen: Adding item=$newItem")
                         items = items + newItem
+                        prefs.edit().putStringSet("items", items.toSet()).apply()
                         newItem = ""
                     }
                 }
@@ -94,7 +99,11 @@ fun ShoppingListScreen() {
                             modifier = Modifier.weight(1f)
                         )
                         Button(
-                            onClick = { items = items.filter { it != item } }
+                            onClick = {
+                                println("ShoppingListScreen: Deleting item=$item")
+                                items = items.filter { it != item }
+                                prefs.edit().putStringSet("items", items.toSet()).apply()
+                            }
                         ) {
                             Text("Löschen")
                         }

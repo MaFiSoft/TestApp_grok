@@ -1,20 +1,22 @@
-# Gradle
-.gradle/
-build/
-
-# Local configuration
-local.properties
-
-# IDE
-.idea/
-*.iml
-
-# Generated files
+# Android
 *.apk
 *.ap_
 *.aab
+/build
+/app/build
 
-# Gradle Wrapper (ausdrücklich erlauben)
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 !gradlew
 !gradlew.bat
-!gradle/wrapper/
+
+# Android Studio
+.idea/
+*.iml
+local.properties
+
+# macOS
+.DS_Store
