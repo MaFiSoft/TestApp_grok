@@ -69,12 +69,15 @@ workflows:
           ls -l
           ls -l gradle/wrapper/
           cat gradle/wrapper/gradle-wrapper.properties
+          echo "Available tasks:"
+          ./gradlew tasks
       - name: Clean Build Cache
         script: |
           ./gradlew cleanBuildCache
           echo "Build cache cleared"
       - name: Build Debug APK
         script: |
-          ./gradlew :app:assembleDebug --stacktrace --warn
+          echo "Running gradlew with standard task syntax"
+          ./gradlew assembleDebug --stacktrace --warn
     artifacts:
       - app/build/outputs/apk/debug/app-debug.apk
