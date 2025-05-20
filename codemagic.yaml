@@ -1,4 +1,4 @@
-# Stand: 2025-05-20_23:05
+# Stand: 2025-05-20_23:15
 workflows:
   android-workflow:
     name: Android Build
@@ -73,7 +73,7 @@ workflows:
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
-          ./gradlew build --refresh-dependencies --stacktrace --info
+          ./gradlew dependencies --refresh-dependencies --stacktrace --info || exit 1
       - name: Debug Kotlin Plugin
         script: |
           echo "Checking Kotlin plugin"
@@ -83,30 +83,14 @@ workflows:
         script: |
           echo "Checking Android Gradle Plugin"
           ./gradlew tasks --all | grep assembleDebug
-          ls -l ~/.m2/repository/com/android/tools/build/
+          if [ -d ~/.m2/repository/com/android/tools/build/ ]; then
+            ls -l ~/.m2/repository/com/android/tools/build/
+          else
+            echo "Error: AGP Maven artifacts not found"
+            exit 1
+          fi
       - name: Clean Build Cache
         script: |
           echo "Manually cleaning build cache"
           rm -rf ~/.gradle/caches/build-cache-*
-          echo "Build cache cleaned manually"
-      - name: Debug Resources
-        script: |
-          ls -l app/src/main/res/
-          ls -l app/src/main/res/mipmap-anydpi-v26/
-          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          cat app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-          cat app/src/main/res/values/themes.xml
-      - name: Debug Dependencies
-        script: |
-          echo "Running dependencies check"
-          ./gradlew :app:dependencies --stacktrace --info
-      - name: Debug Kotlin Compilation
-        script: |
-          echo "Running Kotlin compilation"
-          ./gradlew :app:compileDebugKotlin --stacktrace --info
-      - name: Build Debug APK
-        script: |
-          echo "Running assembleDebug"
-          ./gradlew assembleDebug --stacktrace --info
-    artifacts:
-      - app/build/outputs/apk/debug/app-debug.apk
+          echo
