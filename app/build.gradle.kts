@@ -39,9 +39,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.18"
     }
+    
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
-    }
+        arg("room.verbose", "true") // Für detaillierte Logs
+    }    
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
