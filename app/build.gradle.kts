@@ -51,10 +51,9 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material")
-    implementation "androidx.room:room-runtime:2.6.1"
-    implementation "androidx.room:room-ktx:2.6.1"
-    ksp "androidx.room:room-compiler:2.6.1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
-    ksp "com.google.devtools.ksp:1.0.24" // An neueste Version anpassen
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 }
