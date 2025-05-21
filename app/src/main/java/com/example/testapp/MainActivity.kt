@@ -1,6 +1,7 @@
+// Stand: 2025-05-21_22:30
+// app/src/main/java/com/example/testapp/MainActivity.kt
 package com.example.testapp
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,26 +17,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.Room
+import com.example.testapp.data.AppDatenbank
+import com.example.testapp.ui.ArtikelViewModel
 import com.example.testapp.ui.theme.TestAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         println("MainActivity: onCreate started")
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatenbank::class.java,
+            "app-datenbank"
+        ).build()
+        val artikelViewModel = ArtikelViewModel(db.artikelDao(), db.kategorieDao(), db.geschäftDao())
         setContent {
             TestAppTheme {
-                ShoppingListScreen(this)
+                GesamtlisteMenü(artikelViewModel)
             }
         }
     }
 }
 
 @Composable
-fun ShoppingListScreen(context: Context) {
-    println("ShoppingListScreen: Composable started")
-    val prefs = context.getSharedPreferences("articles", Context.MODE_PRIVATE)
-    var items by remember { mutableStateOf(prefs.getStringSet("items", emptySet())?.toList() ?: emptyList()) }
-    var newItem by remember { mutableStateOf("") }
+fun GesamtlisteMenü(viewModel: ArtikelViewModel) {
+    var newArtikel by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -55,31 +62,33 @@ fun ShoppingListScreen(context: Context) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
-                value = newItem,
-                onValueChange = { newItem = it },
+                value = newArtikel,
+                onValueChange = { newArtikel = it },
                 label = { Text("Neuer Artikel") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(
                 onClick = {
-                    if (newItem.isNotBlank()) {
-                        println("ShoppingListScreen: Adding item=$newItem")
-                        items = items + newItem
-                        prefs.edit().putStringSet("items", items.toSet()).apply()
-                        newItem = ""
+                    if (newArtikel.isNotBlank()) {
+                        println("GesamtlisteMenü: Adding artikel=$newArtikel")
+                        viewModel.viewModelScope.launch {
+                            viewModel.addArtikel(newArtikel)
+                            newArtikel = ""
+                        }
                     }
                 }
             ) {
                 Text("Hinzufügen")
             }
         }
+        val artikelList by viewModel.artikel.collectAsState()
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            items(items) { item ->
+            items(artikelList) { artikel ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -93,16 +102,17 @@ fun ShoppingListScreen(context: Context) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = item,
+                            text = artikel.name,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.weight(1f)
                         )
                         Button(
                             onClick = {
-                                println("ShoppingListScreen: Deleting item=$item")
-                                items = items.filter { it != item }
-                                prefs.edit().putStringSet("items", items.toSet()).apply()
+                                println("GesamtlisteMenü: Deleting artikel=${artikel.name}")
+                                viewModel.viewModelScope.launch {
+                                    viewModel.deleteArtikel(artikel.id)
+                                }
                             }
                         ) {
                             Text("Löschen")
