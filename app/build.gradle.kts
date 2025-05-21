@@ -1,14 +1,14 @@
-// Stand: 2025-05-21_23:45
-// app/build.gradle.kts
 plugins {
     id("com.android.application") version "8.5.2"
     id("org.jetbrains.kotlin.android") version "2.0.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
-    id("com.google.devtools.ksp") version "2.0.0-1.0.24" // KSP-Version bleibt vorerst
+    id("com.google.devtools.ksp") version "2.0.0-1.0.24"
 }
+
 android {
     namespace = "com.example.testapp"
     compileSdk = 34
+
     defaultConfig {
         applicationId = "com.example.testapp"
         minSdk = 24
@@ -16,6 +16,7 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -39,12 +40,8 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.18"
     }
-    
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-        arg("room.verbose", "true") // Für detaillierte Logs
-    }    
 }
+
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -58,4 +55,9 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.verbose", "true")
 }
