@@ -1,9 +1,10 @@
-// Stand: 2025-05-21_22:30
+// Stand: 2025-05-21_23:45
 // app/src/main/java/com/example/testapp/data/ArtikelGeschaeftCrossRef.kt
 package com.example.testapp.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "artikel_geschaeft",
@@ -21,7 +22,8 @@ import androidx.room.ForeignKey
             childColumns = ["geschaeftId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["geschaeftId"])] // Index hinzugefügt
 )
 data class ArtikelGeschaeftCrossRef(
     val artikelId: Int,
