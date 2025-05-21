@@ -14,7 +14,7 @@ interface ArtikelDao {
     suspend fun insert(artikel: Artikel)
 
     @Insert
-    suspend fun insertArtikelGeschäftCrossRef(crossRef: ArtikelGeschäftCrossRef)
+    suspend fun insertArtikelGeschaeftCrossRef(crossRef: ArtikelGeschaeftCrossRef)
 
     @Query("SELECT * FROM artikel")
     fun getAllArtikel(): Flow<List<Artikel>>
