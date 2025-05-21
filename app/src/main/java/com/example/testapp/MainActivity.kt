@@ -31,17 +31,17 @@ class MainActivity : ComponentActivity() {
             AppDatenbank::class.java,
             "app-datenbank"
         ).build()
-        val artikelViewModel = ArtikelViewModel(db.artikelDao(), db.kategorieDao(), db.geschäftDao())
+        val artikelViewModel = ArtikelViewModel(db.artikelDao(), db.kategorieDao(), db.geschaeftDao())
         setContent {
             TestAppTheme {
-                GesamtlisteMenü(artikelViewModel)
+                GesamtlisteMenue(artikelViewModel)
             }
         }
     }
 }
 
 @Composable
-fun GesamtlisteMenü(viewModel: ArtikelViewModel) {
+fun GesamtlisteMenue(viewModel: ArtikelViewModel) {
     var newArtikel by remember { mutableStateOf("") }
 
     Column(
@@ -71,7 +71,7 @@ fun GesamtlisteMenü(viewModel: ArtikelViewModel) {
             Button(
                 onClick = {
                     if (newArtikel.isNotBlank()) {
-                        println("GesamtlisteMenü: Adding artikel=$newArtikel")
+                        println("GesamtlisteMenue: Adding artikel=$newArtikel")
                         viewModel.viewModelScope.launch {
                             viewModel.addArtikel(newArtikel)
                             newArtikel = ""
@@ -79,7 +79,7 @@ fun GesamtlisteMenü(viewModel: ArtikelViewModel) {
                     }
                 }
             ) {
-                Text("Hinzufügen")
+                Text("Hinzufuegen")
             }
         }
         val artikelList by viewModel.artikel.collectAsState()
@@ -109,13 +109,13 @@ fun GesamtlisteMenü(viewModel: ArtikelViewModel) {
                         )
                         Button(
                             onClick = {
-                                println("GesamtlisteMenü: Deleting artikel=${artikel.name}")
+                                println("GesamtlisteMenue: Deleting artikel=${artikel.name}")
                                 viewModel.viewModelScope.launch {
                                     viewModel.deleteArtikel(artikel.id)
                                 }
                             }
                         ) {
-                            Text("Löschen")
+                            Text("Loeschen")
                         }
                     }
                 }
