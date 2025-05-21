@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testapp.data.Artikel
 import com.example.testapp.data.ArtikelDao
+import com.example.testapp.data.Kategorie
 import com.example.testapp.data.KategorieDao
-import com.example.testapp.data.GeschäftDao
+import com.example.testapp.data.Geschaeft
+import com.example.testapp.data.GeschaeftDao
+import com.example.testapp.data.ArtikelGeschaeftCrossRef
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -16,7 +19,7 @@ import kotlinx.coroutines.launch
 class ArtikelViewModel(
     private val artikelDao: ArtikelDao,
     private val kategorieDao: KategorieDao,
-    private val geschäftDao: GeschäftDao
+    private val geschaeftDao: GeschaeftDao
 ) : ViewModel() {
     val artikel: StateFlow<List<Artikel>> = artikelDao.getAllArtikel()
         .stateIn(
@@ -32,7 +35,7 @@ class ArtikelViewModel(
             initialValue = emptyList()
         )
 
-    val geschäfte: StateFlow<List<Geschäft>> = geschäftDao.getAllGeschäfte()
+    val geschaefte: StateFlow<List<Geschaeft>> = geschaeftDao.getAllGeschaefte()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -47,10 +50,8 @@ class ArtikelViewModel(
         kategorieDao.insert(Kategorie(name = name))
     }
 
-    suspend fun addGeschäft(name: String) {
-        geschäftDao.insert(Geschäft(name = name))
-    }
-
+    suspend fun addGeschaeft(name: String) {
+        geschaeftDao.insert(Geschaeft(name = name潇
     suspend fun deleteArtikel(artikelId: Int) {
         artikelDao.delete(artikelId)
     }
@@ -59,11 +60,11 @@ class ArtikelViewModel(
         kategorieDao.delete(kategorieId)
     }
 
-    suspend fun deleteGeschäft(geschäftId: Int) {
-        geschäftDao.delete(geschäftId)
+    suspend fun deleteGeschaeft(geschaeftId: Int) {
+        geschaeftDao.delete(geschaeftId)
     }
 
-    suspend fun assignGeschäftToArtikel(artikelId: Int, geschäftId: Int) {
-        artikelDao.insertArtikelGeschäftCrossRef(ArtikelGeschäftCrossRef(artikelId, geschäftId))
+    suspend fun assignGeschaeftToArtikel(artikelId: Int, geschaeftId: Int) {
+        artikelDao.insertArtikelGeschaeftCrossRef(ArtikelGeschaeftCrossRef(artikelId, geschaeftId))
     }
 }
