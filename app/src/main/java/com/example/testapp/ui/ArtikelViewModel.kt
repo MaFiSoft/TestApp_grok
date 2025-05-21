@@ -1,4 +1,4 @@
-// Stand: 2025-05-21_22:30
+// Stand: 2025-05-21_23:45
 // app/src/main/java/com/example/testapp/ui/ArtikelViewModel.kt
 package com.example.testapp.ui
 
@@ -51,7 +51,9 @@ class ArtikelViewModel(
     }
 
     suspend fun addGeschaeft(name: String) {
-        geschaeftDao.insert(Geschaeft(name = name潇
+        geschaeftDao.insert(Geschaeft(name = name)) // Korrigierte Zeile
+    }
+
     suspend fun deleteArtikel(artikelId: Int) {
         artikelDao.delete(artikelId)
     }
