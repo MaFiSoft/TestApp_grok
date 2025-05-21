@@ -1,9 +1,10 @@
-// Stand: 2025-05-21_22:30
+// Stand: 2025-05-21_23:45
 // app/src/main/java/com/example/testapp/data/Artikel.kt
 package com.example.testapp.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,11 +14,12 @@ import androidx.room.PrimaryKey
         parentColumns = ["id"],
         childColumns = ["kategorieId"],
         onDelete = ForeignKey.SET_NULL
-    )]
+    )],
+    indices = [Index(value = ["kategorieId"])] // Index hinzugefügt
 )
 data class Artikel(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
     val kategorieId: Int? = null,
-    val gekauft: Boolean = false // Für Abhakfunktion
+    val gekauft: Boolean = false
 )
