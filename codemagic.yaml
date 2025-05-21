@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_13:15
+# Stand: 2025-05-22_01:15
 workflows:
   android-workflow:
     name: Android Build
@@ -34,11 +34,6 @@ workflows:
           export GRADLE_HOME=/tmp/gradle-8.7
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
-      - name: Clean Build Cache
-        script: |
-          echo "Cleaning Gradle cache"
-          rm -rf ~/.gradle/caches
-          ./gradlew cleanBuildCache
       - name: Generate Gradle Wrapper
         script: |
           echo "Generating Gradle wrapper"
@@ -46,12 +41,18 @@ workflows:
           ls -l gradle/wrapper/
       - name: Set Execute Permissions
         script: |
+          echo "Setting execute permissions for gradlew"
           if [ -f gradlew ]; then
             chmod +x ./gradlew
           else
             echo "Error: gradlew not found"
             exit 1
           fi
+      - name: Clean Build Cache
+        script: |
+          echo "Cleaning Gradle cache"
+          rm -rf ~/.gradle/caches
+          ./gradlew cleanBuildCache
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
@@ -71,4 +72,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - mafi82290@online.de # Ersetze mit deiner E-Mail
+          - your-email@example.com # Ersetze mit deiner E-Mail
