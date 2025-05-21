@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_01:15
+# Stand: 2025-05-22_03:45
 workflows:
   android-workflow:
     name: Android Build
@@ -51,8 +51,9 @@ workflows:
       - name: Clean Build Cache
         script: |
           echo "Cleaning Gradle cache"
-          rm -rf ~/.gradle/caches
-          ./gradlew cleanBuildCache
+          rm -rf ~/.gradle/caches/8.7/kotlin-dsl
+          rm -rf ~/.gradle/caches/modules-2
+          ./gradlew clean
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
