@@ -1,13 +1,13 @@
 // Stand: 2025-05-21_22:30
-// app/src/main/java/com/example/testapp/data/ArtikelGeschäftCrossRef.kt
+// app/src/main/java/com/example/testapp/data/ArtikelGeschaeftCrossRef.kt
 package com.example.testapp.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(
-    tableName = "artikel_geschäft",
-    primaryKeys = ["artikelId", "geschäftId"],
+    tableName = "artikel_geschaeft",
+    primaryKeys = ["artikelId", "geschaeftId"],
     foreignKeys = [
         ForeignKey(
             entity = Artikel::class,
@@ -16,14 +16,14 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = Geschäft::class,
+            entity = Geschaeft::class,
             parentColumns = ["id"],
-            childColumns = ["geschäftId"],
+            childColumns = ["geschaeftId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class ArtikelGeschäftCrossRef(
+data class ArtikelGeschaeftCrossRef(
     val artikelId: Int,
-    val geschäftId: Int
+    val geschaeftId: Int
 )
