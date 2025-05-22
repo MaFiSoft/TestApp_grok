@@ -101,7 +101,7 @@ workflows:
               echo "Schema file 1.json not generated"
           fi
           echo "Checking KSP generated files"
-          ls -l app/build/generated/ksp/debug/java/ || echo "No KSP generated files found"
+          ls -l app/build/generated/ksp/debug/kotlin/ || echo "No KSP generated files found"
           find app/build/generated/ksp/debug/ -type f
           echo "Searching for schema files in entire project"
           find . -name "*.json" # Suche nach JSON-Dateien im gesamten Projekt
