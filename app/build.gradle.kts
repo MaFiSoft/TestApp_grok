@@ -1,5 +1,3 @@
-// Timestamp: 2025-05-23 00:09:00 CEST
-// /app/build.gradle.kts
 plugins {
     id("com.android.application") version "8.6.0"
     id("org.jetbrains.kotlin.android") version "2.0.20"
