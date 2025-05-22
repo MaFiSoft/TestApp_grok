@@ -30,7 +30,9 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             AppDatenbank::class.java,
             "app-datenbank"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
         val artikelViewModel = ArtikelViewModel(db.artikelDao(), db.kategorieDao(), db.geschaeftDao())
         setContent {
             TestAppTheme {
