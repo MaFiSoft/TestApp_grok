@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_02:37
+# Stand: 2025-05-22_03:06
 workflows:
   android-workflow:
     name: Android Build
@@ -84,10 +84,13 @@ workflows:
           echo "Checking schema files"
           ls -l app/schemas/ || echo "No schema files found"
           if [ -f app/schemas/1.json ]; then
+              echo "Schema file 1.json found"
               cat app/schemas/1.json
           else
               echo "Schema file 1.json not generated"
           fi
+          echo "Checking KSP generated files"
+          ls -l app/build/generated/ksp/debug/kotlin/ || echo "No KSP generated files found"
       - name: Build Debug APK
         script: |
           echo "Running assembleDebug"
