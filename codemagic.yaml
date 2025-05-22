@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_02:28
+# Stand: 2025-05-22_02:37
 workflows:
   android-workflow:
     name: Android Build
@@ -67,6 +67,7 @@ workflows:
           ./gradlew help --task tasks || echo "Failed to list tasks"
           ./gradlew help --task clean || echo "Failed to find clean task"
           ./gradlew help --task build || echo "Failed to find build task"
+          ./gradlew help --task assembleDebug || echo "Failed to find assembleDebug task"
           ./gradlew projects || echo "Failed to list projects"
       - name: Clean Project
         script: |
@@ -80,7 +81,13 @@ workflows:
         script: |
           echo "Running KSP Debug"
           ./gradlew :app:kspDebugKotlin --stacktrace --info
-          ls -l app/schemas/ # Prüfe Schema-Dateien
+          echo "Checking schema files"
+          ls -l app/schemas/ || echo "No schema files found"
+          if [ -f app/schemas/1.json ]; then
+              cat app/schemas/1.json
+          else
+              echo "Schema file 1.json not generated"
+          fi
       - name: Build Debug APK
         script: |
           echo "Running assembleDebug"
