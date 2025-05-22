@@ -81,16 +81,20 @@ workflows:
         script: |
           echo "Running KSP Debug"
           ./gradlew :app:kspDebugKotlin --stacktrace --info
+          echo "Verifying Room schema"
+          ./gradlew verifyRoomSchema --stacktrace --info
           echo "Checking schema files"
           ls -l app/schemas/ || echo "No schema files found"
           if [ -f app/schemas/1.json ]; then
               echo "Schema file 1.json found"
               cat app/schemas/1.json
+              wc -l app/schemas/1.json # Zeilenanzahl zur Größenprüfung
           else
               echo "Schema file 1.json not generated"
           fi
           echo "Checking KSP generated files"
-          ls -l app/build/generated/ksp/debug/kotlin/ || echo "No KSP generated files found"
+          ls -l app/build/generated/ksp/debug/java/ || echo "No KSP generated files found"
+          find app/build/generated/ksp/debug/ -type f # Alle generierten Dateien auflisten
       - name: Build Debug APK
         script: |
           echo "Running assembleDebug"
