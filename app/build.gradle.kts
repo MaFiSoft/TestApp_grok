@@ -17,6 +17,16 @@ android {
         versionName = "1.0"
     }
 
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/kotlin")
+            kotlin.srcDirs("src/main/kotlin")
+        }
+        getByName("debug") {
+            java.srcDirs("src/debug/kotlin")
+            kotlin.srcDirs("src/debug/kotlin")
+        }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
