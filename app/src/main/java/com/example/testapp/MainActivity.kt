@@ -1,5 +1,3 @@
-// Stand: 2025-05-21_22:30
-// app/src/main/java/com/example/testapp/MainActivity.kt
 package com.example.testapp
 
 import android.os.Bundle
@@ -21,6 +19,7 @@ import androidx.room.Room
 import com.example.testapp.data.AppDatenbank
 import com.example.testapp.ui.ArtikelViewModel
 import com.example.testapp.ui.theme.TestAppTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +43,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun GesamtlisteMenue(viewModel: ArtikelViewModel) {
+    val coroutineScope = rememberCoroutineScope()
     var newArtikel by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,7 +73,7 @@ fun GesamtlisteMenue(viewModel: ArtikelViewModel) {
                 onClick = {
                     if (newArtikel.isNotBlank()) {
                         println("GesamtlisteMenue: Adding artikel=$newArtikel")
-                        viewModel.viewModelScope.launch {
+                        coroutineScope.launch {
                             viewModel.addArtikel(newArtikel)
                             newArtikel = ""
                         }
@@ -112,7 +111,7 @@ fun GesamtlisteMenue(viewModel: ArtikelViewModel) {
                         Button(
                             onClick = {
                                 println("GesamtlisteMenue: Deleting artikel=${artikel.name}")
-                                viewModel.viewModelScope.launch {
+                                coroutineScope.launch {
                                     viewModel.deleteArtikel(artikel.id)
                                 }
                             }
