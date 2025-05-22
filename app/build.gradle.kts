@@ -1,10 +1,10 @@
-# Timestamp: 2025-05-22 23:55:00 CEST
+# Timestamp: 2025-05-22 23:58:00 CEST
 # /app/build.gradle.kts
 plugins {
-    id("com.android.application") version "8.7.1"
-    id("org.jetbrains.kotlin.android") version "2.1.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
-    id("com.google.devtools.ksp") version "2.1.0-1.0.24"
+    id("com.android.application") version "8.6.0"
+    id("org.jetbrains.kotlin.android") version "2.0.20"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20"
+    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
 }
 
 android {
@@ -51,7 +51,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "2.0.0"
+        kotlinCompilerExtensionVersion = "1.5.18"
     }
 }
 
@@ -66,7 +66,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.20")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
 }
