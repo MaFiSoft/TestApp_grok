@@ -62,3 +62,14 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.verbose", "true")
 }
+
+tasks.register("verifyRoomSchema") {
+    doLast {
+        val schemaFile = file("$projectDir/schemas/1.json")
+        if (schemaFile.exists() && schemaFile.length() > 0) {
+            println("Schema file ${schemaFile.path} exists and is not empty")
+        } else {
+            throw GradleException("Schema file ${schemaFile.path} is missing or empty")
+        }
+    }
+}
