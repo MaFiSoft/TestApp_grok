@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_01:39
+# Stand: 2025-05-22_01:55
 workflows:
   android-workflow:
     name: Android Build
@@ -34,11 +34,16 @@ workflows:
           export GRADLE_HOME=/tmp/gradle-8.7
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
+      - name: Clean Gradle Cache
+        script: |
+          echo "Cleaning entire Gradle cache"
+          rm -rf ~/.gradle/*
       - name: Generate Gradle Wrapper
         script: |
           echo "Generating Gradle wrapper"
           /tmp/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
           ls -l gradle/wrapper/
+          cat gradle/wrapper/gradle-wrapper.properties
       - name: Set Execute Permissions
         script: |
           echo "Setting execute permissions for gradlew"
@@ -48,15 +53,15 @@ workflows:
             echo "Error: gradlew not found"
             exit 1
           fi
-      - name: Clean Gradle Cache
+      - name: Verify Gradle Setup
         script: |
-          echo "Cleaning entire Gradle cache"
-          rm -rf ~/.gradle/caches/*
-          rm -rf ~/.gradle/wrapper
+          echo "Verifying Gradle setup"
+          ./gradlew --version
+          ./gradlew tasks --all
       - name: Clean Project
         script: |
           echo "Cleaning project"
-          ./gradlew clean
+          ./gradlew clean --stacktrace --info
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
