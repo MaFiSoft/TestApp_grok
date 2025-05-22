@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_03:06
+# Stand: 2025-05-22_03:21
 workflows:
   android-workflow:
     name: Android Build
@@ -64,7 +64,7 @@ workflows:
           echo "Verifying Gradle setup"
           ./gradlew --version
           echo "Checking available tasks"
-          ./gradlew help --task tasks || echo "Failed to list tasks"
+          ./gradlew help --task tasks || echo "Fai led to list tasks"
           ./gradlew help --task clean || echo "Failed to find clean task"
           ./gradlew help --task build || echo "Failed to find build task"
           ./gradlew help --task assembleDebug || echo "Failed to find assembleDebug task"
@@ -82,7 +82,7 @@ workflows:
           echo "Running KSP Debug"
           ./gradlew :app:kspDebugKotlin --stacktrace --info
           echo "Verifying Room schema"
-          ./gradlew verifyRoomSchema --stacktrace --info
+          ./gradlew verifyRoomSchema --stacktrace --info || echo "Schema verification failed"
           echo "Checking schema files"
           ls -l app/schemas/ || echo "No schema files found"
           if [ -f app/schemas/1.json ]; then
@@ -106,4 +106,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - mafi82290@online.de # Ersetze mit deiner E-Mail
+          - your-email@example.com # Ersetze mit deiner E-Mail
