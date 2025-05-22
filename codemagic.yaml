@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_02:07
+# Stand: 2025-05-22_02:28
 workflows:
   android-workflow:
     name: Android Build
@@ -38,6 +38,10 @@ workflows:
         script: |
           echo "Cleaning entire Gradle cache"
           rm -rf ~/.gradle/*
+      - name: Verify Plugin Repositories
+        script: |
+          echo "Verifying plugin repositories"
+          /tmp/gradle-8.7/bin/gradle --init-script <(echo "initscript { repositories { google(); mavenCentral(); gradlePluginPortal() } }") --version
       - name: Generate Gradle Wrapper
         script: |
           echo "Generating Gradle wrapper"
@@ -62,6 +66,8 @@ workflows:
           echo "Checking available tasks"
           ./gradlew help --task tasks || echo "Failed to list tasks"
           ./gradlew help --task clean || echo "Failed to find clean task"
+          ./gradlew help --task build || echo "Failed to find build task"
+          ./gradlew projects || echo "Failed to list projects"
       - name: Clean Project
         script: |
           echo "Cleaning project"
@@ -69,11 +75,12 @@ workflows:
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
-          ./gradlew build --refresh-dependencies --stacktrace --info
+          ./gradlew dependencies --stacktrace --info || echo "Dependencies task failed"
       - name: Build KSP Debug
         script: |
           echo "Running KSP Debug"
           ./gradlew :app:kspDebugKotlin --stacktrace --info
+          ls -l app/schemas/ # Prüfe Schema-Dateien
       - name: Build Debug APK
         script: |
           echo "Running assembleDebug"
