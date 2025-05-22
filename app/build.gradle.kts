@@ -1,10 +1,10 @@
-// Timestamp: 2025-05-23 00:30:00 CEST
+// Timestamp: 2025-05-23 12:38:00 CEST
 // /app/build.gradle.kts
 plugins {
     id("com.android.application") version "8.7.1"
     id("org.jetbrains.kotlin.android") version "2.1.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
-    id("com.google.devtools.ksp") version "2.1.0-1.0.24"
+    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
 }
 
 android {
