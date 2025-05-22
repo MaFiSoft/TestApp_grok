@@ -59,17 +59,27 @@ dependencies {
 }
 
 ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.schemaLocation", "${projectDir}/schemas")
     arg("room.verbose", "true")
+    arg("room.generateKotlin", "true")
 }
 
 tasks.register("verifyRoomSchema") {
     doLast {
-        val schemaFile = file("$projectDir/schemas/1.json")
-        if (schemaFile.exists() && schemaFile.length() > 0) {
-            println("Schema file ${schemaFile.path} exists and is not empty")
+        val schemaDir = file("${projectDir}/schemas")
+        val schemaFile = file("${projectDir}/schemas/1.json")
+        println("Schema directory: ${schemaDir.path}")
+        println("Schema file: ${schemaFile.path}")
+        if (schemaDir.exists()) {
+            println("Schema directory exists")
+            if (schemaFile.exists() && schemaFile.length() > 0) {
+                println("Schema file ${schemaFile.path} exists and is not empty")
+                println("Schema file size: ${schemaFile.length()} bytes")
+            } else {
+                throw GradleException("Schema file ${schemaFile.path} is missing or empty")
+            }
         } else {
-            throw GradleException("Schema file ${schemaFile.path} is missing or empty")
+            throw GradleException("Schema directory ${schemaDir.path} does not exist")
         }
     }
 }
