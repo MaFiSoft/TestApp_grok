@@ -1,4 +1,4 @@
-// Stand: 2025-05-22_21:09
+// Stand: 2025-05-20_23:00
 pluginManagement {
     repositories {
         google()
@@ -8,7 +8,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
