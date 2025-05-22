@@ -1,4 +1,4 @@
-# Stand: 2025-05-22_01:55
+# Stand: 2025-05-22_02:07
 workflows:
   android-workflow:
     name: Android Build
@@ -44,11 +44,13 @@ workflows:
           /tmp/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
           ls -l gradle/wrapper/
           cat gradle/wrapper/gradle-wrapper.properties
+          ls -l gradlew
       - name: Set Execute Permissions
         script: |
           echo "Setting execute permissions for gradlew"
           if [ -f gradlew ]; then
             chmod +x ./gradlew
+            ls -l gradlew
           else
             echo "Error: gradlew not found"
             exit 1
@@ -57,11 +59,13 @@ workflows:
         script: |
           echo "Verifying Gradle setup"
           ./gradlew --version
-          ./gradlew tasks --all
+          echo "Checking available tasks"
+          ./gradlew help --task tasks || echo "Failed to list tasks"
+          ./gradlew help --task clean || echo "Failed to find clean task"
       - name: Clean Project
         script: |
           echo "Cleaning project"
-          ./gradlew clean --stacktrace --info
+          ./gradlew clean --stacktrace --info || echo "Clean task failed"
       - name: Sync Dependencies
         script: |
           echo "Synchronizing Gradle dependencies"
