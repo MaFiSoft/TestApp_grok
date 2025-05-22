@@ -1,4 +1,5 @@
-# Stand: 2025-05-22_12:15
+# Timestamp: 2025-05-22 23:30:00 CEST
+# codemagic.yaml
 workflows:
   android-workflow:
     name: Android Build
@@ -27,11 +28,11 @@ workflows:
           export JAVA_HOME=$(/usr/libexec/java_home -v 17)
           java -version
           echo "JAVA_HOME=$JAVA_HOME"
-      - name: Install Gradle 8.7
+      - name: Install Gradle 8.9
         script: |
-          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.7-bin.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
-          unzip -o gradle-8.7-bin.zip -d /tmp
-          export GRADLE_HOME=/tmp/gradle-8.7
+          wget --retry-connrefused --waitretry=1 --timeout=20 -O gradle-8.9-all.zip https://services.gradle.org/distributions/gradle-8.9-all.zip
+          unzip -o gradle-8.9-all.zip -d /tmp
+          export GRADLE_HOME=/tmp/gradle-8.9
           export PATH=$GRADLE_HOME/bin:$PATH
           gradle --version
       - name: Clean Gradle Cache
@@ -41,11 +42,11 @@ workflows:
       - name: Verify Plugin Repositories
         script: |
           echo "Verifying plugin repositories"
-          /tmp/gradle-8.7/bin/gradle --init-script <(echo "initscript { repositories { google(); mavenCentral(); gradlePluginPortal() } }") --version
+          /tmp/gradle-8.9/bin/gradle --init-script <(echo "initscript { repositories { google(); mavenCentral(); gradlePluginPortal() } }") --version
       - name: Generate Gradle Wrapper
         script: |
           echo "Generating Gradle wrapper"
-          /tmp/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 --distribution-type bin
+          /tmp/gradle-8.9/bin/gradle wrapper --gradle-version 8.9 --distribution-type all
           ls -l gradle/wrapper/
           cat gradle/wrapper/gradle-wrapper.properties
           ls -l gradlew
@@ -116,4 +117,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com # Ersetze mit deiner E-Mail
+          - mafi82290@online.de # Ersetze mit deiner E-Mail
