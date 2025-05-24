@@ -1,6 +1,18 @@
-// Timestamp: 2025-05-23 12:38:00 CEST
-// /build.gradle.kts
-plugins {
-    id("com.google.devtools.ksp") version "2.0.20-1.0.24" apply false
-    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.5.2") // Android Gradle Plugin
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0") // Kotlin
+        classpath("com.google.devtools.ksp:ksp-gradle-plugin:2.0.0-1.0.24") // KSP
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
